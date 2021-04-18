@@ -9,7 +9,6 @@ import com.bsuir.diploma.bonup.exception.user.auth.AccessErrorException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
 import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Coupon;
-import com.bsuir.diploma.bonup.model.task.Task;
 import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserRole;
 import com.bsuir.diploma.bonup.service.photo.PhotoService;

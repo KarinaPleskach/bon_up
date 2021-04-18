@@ -7,8 +7,10 @@ import com.bsuir.diploma.bonup.exception.translation.NoSuchLanguageException;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TranslationServiceImpl implements TranslationService {
 
     @Autowired

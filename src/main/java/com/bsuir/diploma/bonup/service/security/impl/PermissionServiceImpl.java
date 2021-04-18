@@ -6,9 +6,11 @@ import com.bsuir.diploma.bonup.model.user.UserRole;
 import com.bsuir.diploma.bonup.service.security.PermissionService;
 import com.bsuir.diploma.bonup.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Controller
+@Service
+@Transactional
 public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
