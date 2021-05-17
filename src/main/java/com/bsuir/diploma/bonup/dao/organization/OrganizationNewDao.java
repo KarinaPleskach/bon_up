@@ -8,5 +8,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrganizationNewDao extends JpaRepository<OrganizationNew, Long> {
+    Optional<OrganizationNew> findByTitle(String title);
 }
 

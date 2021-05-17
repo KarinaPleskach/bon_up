@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.organization.impl;
 
 import com.bsuir.diploma.bonup.dao.organization.OrganizationNewDao;
 import com.bsuir.diploma.bonup.dto.model.user.auth.organization.OrganizationNewDto;
+import com.bsuir.diploma.bonup.exception.organization.OrganizationWithSuchNameAlreadyExistException;
 import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
 import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.additional.Category;
@@ -30,6 +31,9 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
     @Override
     public void create(OrganizationNewDto organizationNewDto, String lang) {
         UserLogin user = userService.findByToken(organizationNewDto.getToken(), lang);
+        if (organizationNewDao.findByTitle(organizationNewDto.getTitle()).isPresent()) {
+            throw new OrganizationWithSuchNameAlreadyExistException(lang);
+        }
         Photo photo = photoService.getPhoto(organizationNewDto.getPhotoId(), lang);
         Category category = categoryService.getById(organizationNewDto.getCategoryId(), lang);
         OrganizationNew organizationNew = OrganizationNew.builder()
