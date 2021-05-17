@@ -26,7 +26,7 @@ public class PhotoController {
     @Autowired
     private PhotoService photoService;
 
-    @PutMapping
+    @PostMapping
     public ResponseEntity<ResponseWithMessage> upload(@PathVariable("lang") String lang, @RequestParam("file") MultipartFile multipartFile) {
         String message = photoService.savePhoto(multipartFile, lang).toString();
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
