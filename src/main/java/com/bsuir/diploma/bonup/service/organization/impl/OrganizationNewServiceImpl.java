@@ -85,7 +85,7 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
                     n.setLocationCity(o.getLocationCity());
                     n.setLatitude(o.getLatitude());
                     n.setPhotoId(o.getPhoto().getId());
-                    n.setLatitude(o.getLatitude());
+                    n.setLongitude(o.getLongitude());
                     n.setDirectorFirstName(o.getDirectorFirstName());
                     n.setDirectorLastName(o.getDirectorLastName());
                     n.setDirectorSecondName(o.getDirectorSecondName());
