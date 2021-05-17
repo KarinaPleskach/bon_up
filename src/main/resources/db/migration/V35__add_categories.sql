@@ -1,13 +1,13 @@
 insert into category (id, key, parent_id) values
-(50,'food', null),
-(51, 'sport', null),
-(52, 'media', null),
-(53, 'health', null),
-(54, 'literature', null),
-(55, 'films', null),
-(56, 'music', null),
-(54, 'coffee', null),
-(55, 'services', null);
+(50,'new_food', null),
+(51, 'new_sport', null),
+(52, 'new_media', null),
+(53, 'new_health', null),
+(54, 'new_literature', null),
+(55, 'new_films', null),
+(56, 'new_music', null),
+(57, 'new_coffee', null),
+(58, 'new_services', null);
 
 
 drop table if exists temp_translation;
@@ -19,27 +19,27 @@ create table temp_translation (
 );
 
 insert into temp_translation (lang, language_key, value)
-values ('en', 'food', 'Food'),
-       ('en', 'sport', 'Sport/Tourism'),
-       ('en', 'media', 'Media'),
-       ('en', 'health', 'Health'),
-       ('en', 'literature', 'Literature'),
-       ('en', 'films', 'Films'),
-       ('en', 'music', 'Music'),
-       ('en', 'coffee', 'Coffee'),
-       ('en', 'services', 'Services');
+values ('en', 'new_food', 'Food'),
+       ('en', 'new_sport', 'Sport/Tourism'),
+       ('en', 'new_media', 'Media'),
+       ('en', 'new_health', 'Health'),
+       ('en', 'new_literature', 'Literature'),
+       ('en', 'new_films', 'Films'),
+       ('en', 'new_music', 'Music'),
+       ('en', 'new_coffee', 'Coffee'),
+       ('en', 'new_services', 'Services');
 
 
 insert into temp_translation (lang, language_key, value)
-values ('ru', 'food', 'Еда'),
-       ('ru', 'sport', 'Спорт/Туризм'),
-       ('ru', 'media', 'Медиа'),
-       ('ru', 'health', 'Здоровье'),
-       ('ru', 'literature', 'Литература'),
-       ('ru', 'films', 'Фильмы'),
-       ('ru', 'music', 'Музыка'),
-       ('ru', 'coffee', 'Кофе'),
-       ('ru', 'services', 'Сервисы');
+values ('ru', 'new_food', 'Еда'),
+       ('ru', 'new_sport', 'Спорт/Туризм'),
+       ('ru', 'new_media', 'Медиа'),
+       ('ru', 'new_health', 'Здоровье'),
+       ('ru', 'new_literature', 'Литература'),
+       ('ru', 'new_films', 'Фильмы'),
+       ('ru', 'new_music', 'Музыка'),
+       ('ru', 'new_coffee', 'Кофе'),
+       ('ru', 'new_services', 'Сервисы');
 
 insert into language_key (key)
 select language_key
