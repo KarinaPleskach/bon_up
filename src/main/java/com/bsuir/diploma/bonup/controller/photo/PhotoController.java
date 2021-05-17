@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,7 +32,7 @@ public class PhotoController {
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 
-    @PostMapping("{id}")
+    @GetMapping("{id}")
     public ResponseEntity<byte[]> getPhoto(@PathVariable("lang") String lang, @PathVariable("id") Long id) {
         Photo photo = photoService.getPhoto(id, lang);
         return ResponseEntity.ok()
