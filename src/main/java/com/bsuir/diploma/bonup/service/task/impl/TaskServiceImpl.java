@@ -198,7 +198,7 @@ public class TaskServiceImpl implements TaskService {
 
 
         int currentTaskCount = taskNewDao.findAllByOrganizationNew(organization).size();
-        if (organization.getAvailableTasksCount() >= currentTaskCount) {
+        if (currentTaskCount >= organization.getAvailableTasksCount()) {
             throw new NumberOfHeavyTasksException(lang);
         }
 
