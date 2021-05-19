@@ -3,6 +3,7 @@ package com.bsuir.diploma.bonup.controller.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -40,6 +41,13 @@ public class StockController {
     @ResponseBody
     public ResponseEntity<ResponseWithMessage> createStock(@PathVariable("lang") String lang, @RequestBody StockDto stockDto) {
         String message = String.valueOf(stockService.create(stockDto, lang));
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
+    @PutMapping("/{lang}/newStock")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> createNewTask(@PathVariable("lang") String lang, @RequestBody TaskNewDto taskDto) {
+        String message = String.valueOf(stockService.createTaskNew(taskDto, lang));
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 

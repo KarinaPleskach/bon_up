@@ -1,6 +1,7 @@
 package com.bsuir.diploma.bonup.service.task.impl;
 
 import com.bsuir.diploma.bonup.dao.organization.OrganizationRepository;
+import com.bsuir.diploma.bonup.dao.task.StockNewDao;
 import com.bsuir.diploma.bonup.dao.task.StockRepository;
 import com.bsuir.diploma.bonup.dao.translation.LanguageKeyRepository;
 import com.bsuir.diploma.bonup.dao.translation.LanguageRepository;
@@ -10,6 +11,7 @@ import com.bsuir.diploma.bonup.dto.converter.task.StockToPublicStockDtoConverter
 import com.bsuir.diploma.bonup.dto.model.Id;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -18,6 +20,7 @@ import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.exception.BaseException;
 import com.bsuir.diploma.bonup.exception.organization.NoSuchOrganizationException;
 import com.bsuir.diploma.bonup.exception.task.NoSuchStockException;
+import com.bsuir.diploma.bonup.exception.task.limit.NumberOfHeavyTasksException;
 import com.bsuir.diploma.bonup.exception.task.limit.NumberOfStocksLimitException;
 import com.bsuir.diploma.bonup.exception.translation.NoSuchLanguageException;
 import com.bsuir.diploma.bonup.exception.user.auth.AccessErrorException;
@@ -26,7 +29,11 @@ import com.bsuir.diploma.bonup.exception.validation.NegativeNumberException;
 import com.bsuir.diploma.bonup.exception.validation.NotPositiveNumberException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
 import com.bsuir.diploma.bonup.model.organization.Organization;
+import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
+import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Stock;
+import com.bsuir.diploma.bonup.model.task.StockNew;
+import com.bsuir.diploma.bonup.model.task.TaskNew;
 import com.bsuir.diploma.bonup.model.task.additional.Category;
 import com.bsuir.diploma.bonup.model.translation.Language;
 import com.bsuir.diploma.bonup.model.translation.LanguageKey;
@@ -35,16 +42,20 @@ import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserProfile;
 import com.bsuir.diploma.bonup.model.user.UserRole;
 import com.bsuir.diploma.bonup.service.organization.OrganizationContractService;
+import com.bsuir.diploma.bonup.service.organization.OrganizationNewService;
 import com.bsuir.diploma.bonup.service.organization.OrganizationService;
+import com.bsuir.diploma.bonup.service.photo.PhotoService;
 import com.bsuir.diploma.bonup.service.task.StockService;
 import com.bsuir.diploma.bonup.service.task.additional.CategoryService;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import com.bsuir.diploma.bonup.service.user.ProfileService;
 import com.bsuir.diploma.bonup.service.user.UserService;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -72,6 +83,12 @@ public class StockServiceImpl implements StockService {
     private TranslationService translationService;
     @Autowired
     private ProfileService profileService;
+    @Autowired
+    private OrganizationNewService organizationNewService;
+    @Autowired
+    private StockNewDao stockNewDao;
+    @Autowired
+    private PhotoService photoService;
 
     @Autowired
     private StockRepository stockRepository;
@@ -89,6 +106,44 @@ public class StockServiceImpl implements StockService {
     @Autowired
     private StockToPublicStockDtoConverter stockToPublicStockDtoConverter;
 
+    @Override
+    public long createTaskNew(TaskNewDto taskDto, String lang) {
+        UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
+        OrganizationNew organization = organizationNewService.findByNameAndUser(taskDto.getOrganizationName(), userLogin, lang);
+
+        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue());
+        Date date1 = new Date(stamp1.getTime());
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date1);
+
+        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue());
+        Date date2 = new Date(stamp2.getTime());
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date2);
+
+        Category category = categoryService.getById(taskDto.getCategoryId(), lang);
+        Photo photo = photoService.getPhoto(taskDto.getPhotoId(), lang);
+
+
+        int currentTaskCount = stockNewDao.findAllByOrganizationNew(organization).size();
+        if (currentTaskCount >= organization.getAvailableTasksCount()) {
+            throw new NumberOfHeavyTasksException(lang);
+        }
+
+        StockNew taskNew = StockNew.builder()
+                .title(taskDto.getTitle())
+                .organizationNew(organization)
+                .category(category)
+                .photo(photo)
+                .description(taskDto.getDescriptionText())
+                .dateFrom(c1)
+                .dateTo(c2)
+                .build();
+
+        stockNewDao.save(taskNew);
+
+        return taskNew.getId();
+    }
 
     @Override
     public long create(StockDto stockDto, String lang) {

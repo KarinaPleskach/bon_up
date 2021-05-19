@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -10,6 +11,8 @@ import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import java.util.List;
 
 public interface StockService {
+    long createTaskNew(TaskNewDto taskDto, String lang);
+
     long create(StockDto stockDto, String lang);
     void setNameAndDescription(SetNameAndDescriptionDto setNameAndDescriptionDto, String lang);
     int getNumberOfActiveStocks(TokenNameOrganization tokenNameOrganization, String lang);
