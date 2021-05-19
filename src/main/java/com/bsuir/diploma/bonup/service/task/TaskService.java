@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
@@ -26,6 +27,8 @@ public interface TaskService {
     int getNumberOfUnactiveTasks(TokenNameOrganization tokenNameOrganization, String lang);
 
     PublicTaskDto getTask(IdToken id, String lang);
+
+    List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
 
     List<PublicTaskDto> getActiveTasks(TokenNameOrganization tokenNameOrganization, String lang);
 

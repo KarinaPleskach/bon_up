@@ -10,6 +10,7 @@ import com.bsuir.diploma.bonup.dto.converter.task.TaskDtoToTaskConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskToPublicTaskDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
@@ -183,12 +184,12 @@ public class TaskServiceImpl implements TaskService {
         UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(taskDto.getOrganizationName(), userLogin, lang);
 
-        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue());
+        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue() * 1000);
         Date date1 = new Date(stamp1.getTime());
         Calendar c1 = Calendar.getInstance();
         c1.setTime(date1);
 
-        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue());
+        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue() * 1000);
         Date date2 = new Date(stamp2.getTime());
         Calendar c2 = Calendar.getInstance();
         c2.setTime(date2);
@@ -199,7 +200,7 @@ public class TaskServiceImpl implements TaskService {
 
         int currentTaskCount = taskNewDao.findAllByOrganizationNew(organization).size();
         if (currentTaskCount >= organization.getAvailableTasksCount()) {
-            throw new NumberOfHeavyTasksException(lang);
+            throw new NumberOfTasksLimitException(lang);
         }
 
         TaskNew taskNew = TaskNew.builder()
@@ -380,6 +381,30 @@ public class TaskServiceImpl implements TaskService {
     private void validateId(IdToken id, String lang) {
         if (Objects.isNull(id) || Objects.isNull(id.getId()))
             throw new NullValidationException(lang);
+    }
+
+    @Override
+    public List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
+        UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
+        OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
+
+        return taskNewDao.findAllByOrganizationNew(organization).stream()
+                .map(o -> {
+                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(o.getCount())
+                            .bonusesCount(o.getBonus())
+                            .descriptionText(o.getDescription())
+                            .categoryId(o.getCategory().getId())
+                            .id(o.getId())
+                            .photoId(o.getPhoto().getId())
+                            .title(o.getTitle())
+                            .organizationName(organization.getTitle())
+                            .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
+                            .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .build();
+                    return t;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

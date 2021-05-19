@@ -2,12 +2,15 @@ package com.bsuir.diploma.bonup.controller.organization;
 
 import com.bsuir.diploma.bonup.dto.model.organization.NewOrganizationWithPhoto;
 import com.bsuir.diploma.bonup.dto.model.organization.OrganizationWithPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.organization.OrganizationNewDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
 import com.bsuir.diploma.bonup.dto.response.organization.ResponseWithNewOrganizations;
 import com.bsuir.diploma.bonup.dto.response.organization.ResponseWithOrganizations;
 import com.bsuir.diploma.bonup.service.organization.OrganizationNewService;
+import com.bsuir.diploma.bonup.service.task.TaskService;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class NewOrganizationController {
     private TranslationService translationService;
     @Autowired
     private OrganizationNewService organizationNewService;
+    @Autowired
+    private TaskService taskService;
 
     @PostMapping("/{lang}/newOrganization")
     @ResponseBody
@@ -40,6 +45,13 @@ public class NewOrganizationController {
     public List<NewOrganizationWithPhoto> getListOfOrganizations(@PathVariable("lang") String lang, @RequestBody TokenDto tokenDto) {
         List<NewOrganizationWithPhoto> list = organizationNewService.getOrganizations(tokenDto, lang);
 //        String message = translationService.getMessage("message.success", lang);
+        return list;
+    }
+
+    @PostMapping("/{lang}/organizationTasks")
+    @ResponseBody
+    public List<PublicTaskNewDto> organizationTasks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
+        List<PublicTaskNewDto> list = taskService.getAllForOrg(tokenDto, lang);
         return list;
     }
 }

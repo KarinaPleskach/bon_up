@@ -111,12 +111,12 @@ public class StockServiceImpl implements StockService {
         UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(taskDto.getOrganizationName(), userLogin, lang);
 
-        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue());
+        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue() * 1000);
         Date date1 = new Date(stamp1.getTime());
         Calendar c1 = Calendar.getInstance();
         c1.setTime(date1);
 
-        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue());
+        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue() * 1000);
         Date date2 = new Date(stamp2.getTime());
         Calendar c2 = Calendar.getInstance();
         c2.setTime(date2);
