@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -13,6 +14,8 @@ import java.util.List;
 
 public interface TaskService {
     long create(TaskDto taskDto, String lang);
+
+    long createTaskNew(TaskNewDto taskDto, String lang);
 
     void setNameAndDescription(SetNameAndDescriptionDto setNameAndDescriptionDto, String lang);
 

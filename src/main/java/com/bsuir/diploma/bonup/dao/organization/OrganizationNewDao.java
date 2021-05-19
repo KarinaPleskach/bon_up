@@ -10,5 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OrganizationNewDao extends JpaRepository<OrganizationNew, Long> {
     Optional<OrganizationNew> findByTitle(String title);
     List<OrganizationNew> findByUserLogin(UserLogin userLogin);
+    Optional<OrganizationNew> findByTitleAndUserLogin(String title, UserLogin userLogin);
+    Optional<OrganizationNew> findByIdAndUserLogin(Long id, UserLogin userLogin);
 }
 

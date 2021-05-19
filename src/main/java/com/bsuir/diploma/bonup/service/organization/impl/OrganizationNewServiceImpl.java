@@ -4,8 +4,10 @@ import com.bsuir.diploma.bonup.dao.organization.OrganizationNewDao;
 import com.bsuir.diploma.bonup.dto.model.organization.NewOrganizationWithPhoto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.organization.OrganizationNewDto;
+import com.bsuir.diploma.bonup.exception.organization.NoSuchOrganizationException;
 import com.bsuir.diploma.bonup.exception.organization.OrganizationWithSuchNameAlreadyExistException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
+import com.bsuir.diploma.bonup.model.organization.Organization;
 import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
 import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.additional.Category;
@@ -103,4 +105,15 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
         }
     }
 
+    @Override
+    public OrganizationNew findByNameAndUser(String name, UserLogin userLogin, String lang) {
+        return organizationNewDao.findByTitleAndUserLogin(name, userLogin)
+                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+    }
+
+    @Override
+    public OrganizationNew findByIdAndUser(Long id, UserLogin userLogin, String lang) {
+        return organizationNewDao.findByIdAndUserLogin(id, userLogin)
+                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+    }
 }

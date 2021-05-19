@@ -1,6 +1,7 @@
 package com.bsuir.diploma.bonup.service.task.impl;
 
 import com.bsuir.diploma.bonup.dao.organization.OrganizationRepository;
+import com.bsuir.diploma.bonup.dao.task.TaskNewDao;
 import com.bsuir.diploma.bonup.dao.task.TaskRepository;
 import com.bsuir.diploma.bonup.dao.translation.LanguageKeyRepository;
 import com.bsuir.diploma.bonup.dao.translation.LanguageRepository;
@@ -9,6 +10,7 @@ import com.bsuir.diploma.bonup.dto.converter.task.TaskDtoToTaskConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskToPublicTaskDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
@@ -37,7 +39,10 @@ import com.bsuir.diploma.bonup.exception.validation.NotPositiveNumberException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
 import com.bsuir.diploma.bonup.model.organization.Employee;
 import com.bsuir.diploma.bonup.model.organization.Organization;
+import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
+import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Task;
+import com.bsuir.diploma.bonup.model.task.TaskNew;
 import com.bsuir.diploma.bonup.model.task.additional.Category;
 import com.bsuir.diploma.bonup.model.task.additional.Type;
 import com.bsuir.diploma.bonup.model.translation.Language;
@@ -47,18 +52,22 @@ import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserProfile;
 import com.bsuir.diploma.bonup.model.user.UserRole;
 import com.bsuir.diploma.bonup.service.organization.OrganizationContractService;
+import com.bsuir.diploma.bonup.service.organization.OrganizationNewService;
 import com.bsuir.diploma.bonup.service.organization.OrganizationService;
 import com.bsuir.diploma.bonup.service.organization.employee.EmployeeService;
+import com.bsuir.diploma.bonup.service.photo.PhotoService;
 import com.bsuir.diploma.bonup.service.task.TaskService;
 import com.bsuir.diploma.bonup.service.task.additional.CategoryService;
 import com.bsuir.diploma.bonup.service.task.additional.TypeService;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import com.bsuir.diploma.bonup.service.user.ProfileService;
 import com.bsuir.diploma.bonup.service.user.UserService;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -84,6 +93,10 @@ public class TaskServiceImpl implements TaskService {
     private LanguageTranslationRepository languageTranslationRepository;
     @Autowired
     private OrganizationRepository organizationRepository;
+    @Autowired
+    private TaskNewDao taskNewDao;
+    @Autowired
+    private PhotoService photoService;
 
     @Autowired
     private UserService userService;
@@ -101,6 +114,8 @@ public class TaskServiceImpl implements TaskService {
     private ProfileService profileService;
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private OrganizationNewService organizationNewService;
 
     @Autowired
     private TaskDtoToTaskConverter taskDtoToTaskConverter;
@@ -161,6 +176,47 @@ public class TaskServiceImpl implements TaskService {
 
 
         return task.getId();
+    }
+
+    @Override
+    public long createTaskNew(TaskNewDto taskDto, String lang) {
+        UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
+        OrganizationNew organization = organizationNewService.findByIdAndUser(taskDto.getOrganizationId(), userLogin, lang);
+
+        Timestamp stamp1 = new Timestamp(Long.parseLong(taskDto.getStartDateTimestamp().toString()));
+        Date date1 = new Date(stamp1.getTime());
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date1);
+
+        Timestamp stamp2 = new Timestamp(Long.parseLong(taskDto.getEndDateTimestamp().toString()));
+        Date date2 = new Date(stamp2.getTime());
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date2);
+
+        Category category = categoryService.getById(taskDto.getCategoryId(), lang);
+        Photo photo = photoService.getPhoto(taskDto.getPhotoId(), lang);
+
+
+        int currentTaskCount = taskNewDao.findAllByOrganizationNew(organization).size();
+        if (organization.getAvailableTasksCount() >= currentTaskCount) {
+            throw new NumberOfHeavyTasksException(lang);
+        }
+
+        TaskNew taskNew = TaskNew.builder()
+                .title(taskDto.getTitle())
+                .organizationNew(organization)
+                .category(category)
+                .count(taskDto.getAllowedCount())
+                .bonus(taskDto.getBonusesCount())
+                .photo(photo)
+                .description(taskDto.getDescriptionText())
+                .dateFrom(c1)
+                .dateTo(c2)
+                .build();
+
+        taskNewDao.save(taskNew);
+
+        return taskNew.getId();
     }
 
     private void validateTaskDto(TaskDto taskDto, String lang) {

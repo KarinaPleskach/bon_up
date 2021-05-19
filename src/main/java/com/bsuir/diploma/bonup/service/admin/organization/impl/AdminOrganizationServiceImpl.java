@@ -157,8 +157,9 @@ public class AdminOrganizationServiceImpl implements AdminOrganizationService {
         if (Objects.isNull(adminNameDto.getName())) {
             throw new NullValidationException(lang);
         }
-        Organization organization = organizationRepository.findByName(adminNameDto.getName())
-                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+        Organization organization = null;
+//                organizationRepository.findByName(adminNameDto.getName())
+//                .orElseThrow(() -> new NoSuchOrganizationException(lang));
         return contractRepository.findByOrganization(organization)
                 .stream()
                 .map(contract -> contractToAllContractDtoConverter.convert(contract))
@@ -279,9 +280,9 @@ public class AdminOrganizationServiceImpl implements AdminOrganizationService {
         if (Objects.isNull(newOrganization.getName()) || Objects.isNull(newOrganization.getX()) || Objects.isNull(newOrganization.getY()) || Objects.isNull(newOrganization.getCityId()) || Objects.isNull(newOrganization.getUserOrganizationToken())) {
             throw new NullValidationException(lang);
         }
-        if (organizationRepository.findByName(newOrganization.getName()).isPresent()) {
-            throw new OrganizationWithSuchNameAlreadyExistException(lang);
-        }
+//        if (organizationRepository.findByName(newOrganization.getName()).isPresent()) {
+//            throw new OrganizationWithSuchNameAlreadyExistException(lang);
+//        }
         if (!userLoginRepository.findByToken(newOrganization.getUserOrganizationToken()).isPresent()) {
             throw new NoSuchUserException(lang);
         }
@@ -307,8 +308,9 @@ public class AdminOrganizationServiceImpl implements AdminOrganizationService {
             throw new DateToBeforeException(lang);
 
         UserLogin userLogin = userService.findByToken(contractDto.getUserOrganizationToken(), lang);
-        return organizationRepository.findByNameAndUserLogin(contractDto.getName(), userLogin)
-                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+//        return organizationRepository.findByNameAndUserLogin(contractDto.getName(), userLogin)
+//                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+        return null;
     }
 
     private Role getAdminOrganizationRole() {

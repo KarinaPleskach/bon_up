@@ -3,6 +3,7 @@ package com.bsuir.diploma.bonup.controller.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
 import com.bsuir.diploma.bonup.dto.model.task.task.PublicTaskDto;
@@ -44,6 +45,13 @@ public class TaskController {
     @ResponseBody
     public ResponseEntity<ResponseWithMessage> createTask(@PathVariable("lang") String lang, @RequestBody TaskDto taskDto) {
         String message = String.valueOf(taskService.create(taskDto, lang));
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
+    @PutMapping("/{lang}/newTask")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> createNewTask(@PathVariable("lang") String lang, @RequestBody TaskNewDto taskDto) {
+        String message = String.valueOf(taskService.createTaskNew(taskDto, lang));
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 
