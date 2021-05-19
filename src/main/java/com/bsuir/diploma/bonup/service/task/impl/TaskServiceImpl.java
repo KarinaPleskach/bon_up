@@ -183,12 +183,12 @@ public class TaskServiceImpl implements TaskService {
         UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(taskDto.getOrganizationName(), userLogin, lang);
 
-        Timestamp stamp1 = new Timestamp(Long.parseLong(taskDto.getStartDateTimestamp().toString()));
+        Timestamp stamp1 = new Timestamp(taskDto.getStartDateTimestamp().longValue());
         Date date1 = new Date(stamp1.getTime());
         Calendar c1 = Calendar.getInstance();
         c1.setTime(date1);
 
-        Timestamp stamp2 = new Timestamp(Long.parseLong(taskDto.getEndDateTimestamp().toString()));
+        Timestamp stamp2 = new Timestamp(taskDto.getEndDateTimestamp().longValue());
         Date date2 = new Date(stamp2.getTime());
         Calendar c2 = Calendar.getInstance();
         c2.setTime(date2);
