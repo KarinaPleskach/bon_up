@@ -3,6 +3,7 @@ package com.bsuir.diploma.bonup.controller.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
@@ -48,6 +49,14 @@ public class CouponController {
         String message = String.valueOf(couponService.create(taskDto, lang));
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
+
+    @PutMapping("/{lang}/newCoupon")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> createNewTask(@PathVariable("lang") String lang, @RequestBody TaskNewDto taskDto) {
+        String message = String.valueOf(couponService.createTaskNew(taskDto, lang));
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
 
     @PatchMapping("/{lang}/setCouponNameAndDescription")
     @ResponseBody

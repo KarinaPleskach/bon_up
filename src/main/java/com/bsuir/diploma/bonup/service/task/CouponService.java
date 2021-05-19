@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
@@ -13,6 +14,8 @@ import com.bsuir.diploma.bonup.model.task.additional.Type;
 import java.util.List;
 
 public interface CouponService {
+    long createTaskNew(TaskNewDto taskDto, String lang);
+
     long create(CouponDto taskDto, String lang);
 
     void setNameAndDescription(SetNameAndDescriptionDto setNameAndDescriptionDto, String lang);
