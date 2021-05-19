@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
@@ -15,6 +16,8 @@ import java.util.List;
 
 public interface CouponService {
     long createTaskNew(TaskNewDto taskDto, String lang);
+
+    List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
 
     long create(CouponDto taskDto, String lang);
 

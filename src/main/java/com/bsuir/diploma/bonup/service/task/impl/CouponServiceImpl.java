@@ -10,6 +10,7 @@ import com.bsuir.diploma.bonup.dto.converter.task.CouponDtoToCouponConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.CouponToPublicCouponDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
@@ -166,6 +167,30 @@ public class CouponServiceImpl implements CouponService {
         couponNewDao.save(taskNew);
 
         return taskNew.getId();
+    }
+
+    @Override
+    public List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
+        UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
+        OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
+
+        return couponNewDao.findAllByOrganizationNew(organization).stream()
+                .map(o -> {
+                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(o.getCount())
+                            .bonusesCount(o.getBonus())
+                            .descriptionText(o.getDescription())
+                            .categoryId(o.getCategory().getId())
+//                            .id(o.getId())
+                            .photoId(o.getPhoto().getId())
+                            .title(o.getTitle())
+                            .organizationName(organization.getTitle())
+                            .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
+                            .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .build();
+                    return t;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
