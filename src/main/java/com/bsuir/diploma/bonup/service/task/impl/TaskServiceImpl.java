@@ -395,7 +395,7 @@ public class TaskServiceImpl implements TaskService {
                             .bonusesCount(o.getBonus())
                             .descriptionText(o.getDescription())
                             .categoryId(o.getCategory().getId())
-                            .id(o.getId())
+//                            .id(o.getId())
                             .photoId(o.getPhoto().getId())
                             .title(o.getTitle())
                             .organizationName(organization.getTitle())

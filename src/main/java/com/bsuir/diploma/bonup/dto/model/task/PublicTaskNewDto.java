@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PublicTaskNewDto {
-    private Long id;
+//    private Long id;
     private String title;
     private String descriptionText;
     private Long categoryId;
