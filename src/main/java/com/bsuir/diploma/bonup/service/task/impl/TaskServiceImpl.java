@@ -181,7 +181,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public long createTaskNew(TaskNewDto taskDto, String lang) {
         UserLogin userLogin = userService.findByToken(taskDto.getToken(), lang);
-        OrganizationNew organization = organizationNewService.findByIdAndUser(taskDto.getOrganizationId(), userLogin, lang);
+        OrganizationNew organization = organizationNewService.findByNameAndUser(taskDto.getOrganizationName(), userLogin, lang);
 
         Timestamp stamp1 = new Timestamp(Long.parseLong(taskDto.getStartDateTimestamp().toString()));
         Date date1 = new Date(stamp1.getTime());

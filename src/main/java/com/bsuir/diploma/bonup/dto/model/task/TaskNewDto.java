@@ -14,7 +14,7 @@ public class TaskNewDto {
     private String descriptionText;
     private Long categoryId;
     private String token;
-    private Long organizationId;
+    private String organizationName;
     private Integer bonusesCount;
     private Integer allowedCount;
     private Double startDateTimestamp;
