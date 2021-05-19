@@ -154,6 +154,8 @@ public class StockServiceImpl implements StockService {
         return stockNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {
                     PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(0)
+                            .bonusesCount(0)
                             .descriptionText(o.getDescription())
                             .categoryId(o.getCategory().getId())
 //                            .id(o.getId())

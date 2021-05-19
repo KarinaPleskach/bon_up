@@ -9,6 +9,7 @@ import com.bsuir.diploma.bonup.dto.model.user.auth.organization.OrganizationNewD
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
 import com.bsuir.diploma.bonup.dto.response.organization.ResponseWithNewOrganizations;
 import com.bsuir.diploma.bonup.dto.response.organization.ResponseWithOrganizations;
+import com.bsuir.diploma.bonup.dto.response.task.ResponseWithTasksAndCoupons;
 import com.bsuir.diploma.bonup.service.organization.OrganizationNewService;
 import com.bsuir.diploma.bonup.service.task.CouponService;
 import com.bsuir.diploma.bonup.service.task.StockService;
@@ -73,5 +74,13 @@ public class NewOrganizationController {
     public List<PublicTaskNewDto> organizationStocks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
         List<PublicTaskNewDto> list = stockService.getAllForOrg(tokenDto, lang);
         return list;
+    }
+
+    @PostMapping("/{lang}/organizationTasksAndCoupons")
+    @ResponseBody
+    public ResponseEntity<ResponseWithTasksAndCoupons> organizationTasksAndCoupons(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
+        List<PublicTaskNewDto> tasks = taskService.getAllForOrg(tokenDto, lang);
+        List<PublicTaskNewDto> list = couponService.getAllForOrg(tokenDto, lang);
+        return new ResponseEntity<>(new ResponseWithTasksAndCoupons(tasks, list), HttpStatus.OK);
     }
 }
