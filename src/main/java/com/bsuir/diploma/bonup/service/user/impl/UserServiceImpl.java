@@ -164,9 +164,9 @@ public class UserServiceImpl implements UserService {
         checkPermission(user, lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         int sum = 0;
-        for (Task task : profile.getDoneTasks()) {
-            sum += task.getType().getPointsCount();
-        }
+//        for (Task task : profile.getDoneTasks()) {
+//            sum += task.getType().getPointsCount();
+//        }
         return sum;
     }
 
