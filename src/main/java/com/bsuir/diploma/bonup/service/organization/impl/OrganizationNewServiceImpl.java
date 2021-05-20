@@ -184,28 +184,27 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
 
         Photo photo = photoService.getPhoto(organizationNewDto.getPhotoId(), lang);
         Category category = categoryService.getById(organizationNewDto.getCategoryId(), lang);
-        OrganizationNew.builder()
-                .availableCouponsCount(organizationNewDto.getAvailableCouponsCount())
-                .availableStocksCount(organizationNewDto.getAvailableStocksCount())
-                .availableTasksCount(organizationNewDto.getAvailableTasksCount())
-                .contactsPhone(organizationNewDto.getContactsPhone())
-                .contactsVK(organizationNewDto.getContactsVK())
-                .contactsWebSite(organizationNewDto.getContactsWebSite())
-                .descriptionText(organizationNewDto.getDescriptionText())
-                .directorFirstName(organizationNewDto.getDirectorFirstName())
-                .directorLastName(organizationNewDto.getDirectorLastName())
-                .directorSecondName(organizationNewDto.getDirectorSecondName())
-                .locationCity(organizationNewDto.getLocationCity())
-                .locationCountry(organizationNewDto.getLocationCountry())
-                .userLogin(user)
-                .locationHomeNumber(organizationNewDto.getLocationHomeNumber())
-                .locationStreet(organizationNewDto.getLocationStreet())
-                .photo(photo)
-                .title(organizationNewDto.getTitle())
-                .category(category)
-                .latitude(0.0f)
-                .longitude(0.0f)
-                .build();
+
+        organizationNew.setAvailableCouponsCount(organizationNewDto.getAvailableCouponsCount());
+        organizationNew.setAvailableStocksCount(organizationNewDto.getAvailableStocksCount());
+        organizationNew.setAvailableTasksCount(organizationNewDto.getAvailableTasksCount());
+        organizationNew.setContactsPhone(organizationNewDto.getContactsPhone());
+        organizationNew.setContactsVK(organizationNewDto.getContactsVK());
+        organizationNew.setContactsWebSite(organizationNewDto.getContactsWebSite());
+        organizationNew.setDescriptionText(organizationNewDto.getDescriptionText());
+        organizationNew.setDirectorFirstName(organizationNewDto.getDirectorFirstName());
+        organizationNew.setDirectorLastName(organizationNewDto.getDirectorLastName());
+        organizationNew.setDirectorSecondName(organizationNewDto.getDirectorSecondName());
+        organizationNew.setLocationCity(organizationNewDto.getLocationCity());
+        organizationNew.setLocationCountry(organizationNewDto.getLocationCountry());
+        organizationNew.setUserLogin(user);
+        organizationNew.setLocationHomeNumber(organizationNewDto.getLocationHomeNumber());
+        organizationNew.setLocationStreet(organizationNewDto.getLocationStreet());
+        organizationNew.setPhoto(photo);
+        organizationNew.setTitle(organizationNewDto.getTitle());
+        organizationNew.setCategory(category);
+        organizationNew.setLatitude(0.0f);
+        organizationNew.setLongitude(0.0f);
     }
 }
 
