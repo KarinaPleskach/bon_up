@@ -10,6 +10,7 @@ import com.bsuir.diploma.bonup.dto.converter.task.TaskDtoToTaskConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskToPublicTaskDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
@@ -366,7 +367,7 @@ public class TaskServiceImpl implements TaskService {
             UserLogin user = userService.findByToken(id.getToken(), lang);
             UserProfile profile = profileService.findByUserLogin(user, lang);
             publicTaskDto.setAccepted(profile.getAcceptedTasks().contains(task));
-            publicTaskDto.setRejected(profile.getRejectedTasks().contains(task));
+//            publicTaskDto.setRejected(profile.getRejectedTasks().contains(task));
             publicTaskDto.setDone(profile.getDoneTasks().contains(task));
         }
 
@@ -427,7 +428,7 @@ public class TaskServiceImpl implements TaskService {
                     PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
                         taskDto.setAccepted(finalProfile.getAcceptedTasks().contains(task));
-                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
+//                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
                         taskDto.setDone(finalProfile.getDoneTasks().contains(task));
                     }
                     return taskDto;
@@ -468,7 +469,7 @@ public class TaskServiceImpl implements TaskService {
                     PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
                         taskDto.setAccepted(finalProfile.getAcceptedTasks().contains(task));
-                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
+//                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
                         taskDto.setDone(finalProfile.getDoneTasks().contains(task));
                     }
                     return taskDto;
@@ -508,7 +509,7 @@ public class TaskServiceImpl implements TaskService {
                     PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
                         taskDto.setAccepted(finalProfile.getAcceptedTasks().contains(task));
-                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
+//                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
                         taskDto.setDone(finalProfile.getDoneTasks().contains(task));
                     }
                     return taskDto;
@@ -558,13 +559,15 @@ public class TaskServiceImpl implements TaskService {
                     if (finalProfile == null) {
                         return true;
                     }
-                    return !finalProfile.getAcceptedTasks().contains(task) && !finalProfile.getRejectedTasks().contains(task) && !finalProfile.getDoneTasks().contains(task);
+                    return !finalProfile.getAcceptedTasks().contains(task)
+//                            && !finalProfile.getRejectedTasks().contains(task) && !finalProfile.getDoneTasks().contains(task)
+                            ;
                 })
                 .map(task -> {
                     PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
                         taskDto.setAccepted(finalProfile.getAcceptedTasks().contains(task));
-                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
+//                        taskDto.setRejected(finalProfile.getRejectedTasks().contains(task));
                         taskDto.setDone(finalProfile.getDoneTasks().contains(task));
                     }
                     return taskDto;
@@ -581,6 +584,32 @@ public class TaskServiceImpl implements TaskService {
                         taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
                         taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
                     }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NewPublicTaskDto> tasksCatalog(TokenDto tokenDto, String lang) {
+        List<Category> categories = new ArrayList<>();
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        final UserProfile profile = profileService.findByUserLogin(user, lang);
+        categories = profile.getCategories();
+
+        return taskNewDao.findAllByCategoryInAndDateToGreaterThanEqual(categories, today()).stream()
+                .filter(task -> !profile.getAcceptedTasks().contains(task) && !profile.getDoneTasks().contains(task))
+                .limit(25)
+                .map(task -> {
+                    NewPublicTaskDto publicTaskNewDto = new NewPublicTaskDto();
+                    publicTaskNewDto.setName(task.getTitle());
+                    publicTaskNewDto.setCategoryId(task.getCategory().getId());
+                    publicTaskNewDto.setDescription(task.getDescription());
+                    publicTaskNewDto.setId(task.getId());
+                    publicTaskNewDto.setOrganizationName(task.getOrganizationNew().getTitle());
+                    publicTaskNewDto.setPhotoId(task.getPhoto().getId());
+                    publicTaskNewDto.setDateFrom(format.format(task.getDateFrom().getTime()));
+                    publicTaskNewDto.setDateTo(format.format(task.getDateTo().getTime()));
+
+                    return publicTaskNewDto;
                 })
                 .collect(Collectors.toList());
     }
@@ -604,13 +633,14 @@ public class TaskServiceImpl implements TaskService {
         Task task = findById(idToken.getId(), lang);
         if (profile.getDoneTasks().contains(task)) {
             throw new TaskAlreadyDoneException(lang);
-        } else if (profile.getRejectedTasks().contains(task)) {
-            profile.getRejectedTasks().remove(task);
         }
+//        else if (profile.getRejectedTasks().contains(task)) {
+//            profile.getRejectedTasks().remove(task);
+//        }
         if (profile.getAcceptedTasks().contains(task)) {
             throw new TaskAlreadyAcceptedException(lang);
         }
-        profile.getAcceptedTasks().add(task);
+//        profile.getAcceptedTasks().add(task);
     }
 
     @Override
@@ -625,10 +655,10 @@ public class TaskServiceImpl implements TaskService {
         } else if (profile.getAcceptedTasks().contains(task)) {
             profile.getAcceptedTasks().remove(task);
         }
-        if (profile.getRejectedTasks().contains(task)) {
-            throw new TaskAlreadyRejectedException(lang);
-        }
-        profile.getRejectedTasks().add(task);
+//        if (profile.getRejectedTasks().contains(task)) {
+//            throw new TaskAlreadyRejectedException(lang);
+//        }
+//        profile.getRejectedTasks().add(task);
     }
 
     private void validateIdToken(IdToken idToken, String lang) {
@@ -650,7 +680,8 @@ public class TaskServiceImpl implements TaskService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getRejectedTasks().size();
+//        return profile.getRejectedTasks().size();
+        return 0;
     }
 
     private void validateTokenUser(TokenDto tokenUser, String lang) {
@@ -666,10 +697,11 @@ public class TaskServiceImpl implements TaskService {
         UserProfile profile = profileService.findByUserLogin(user, lang);
         return profile.getAcceptedTasks().stream()
                 .map(task -> {
-                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
-                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
-                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
-                    taskDto.setDone(profile.getDoneTasks().contains(task));
+                    PublicTaskDto taskDto = null;
+//                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
+//                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
+////                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
+//                    taskDto.setDone(profile.getDoneTasks().contains(task));
                     return taskDto;
                 })
                 .peek(taskDto -> {
@@ -693,28 +725,29 @@ public class TaskServiceImpl implements TaskService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getRejectedTasks().stream()
-                .map(task -> {
-                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
-                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
-                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
-                    taskDto.setDone(profile.getDoneTasks().contains(task));
-                    return taskDto;
-                })
-                .peek(taskDto -> {
-                    taskDto.setCategory(translationService.getMessage(taskDto.getCategory(), lang));
-                    taskDto.setSubcategory(translationService.getMessage(taskDto.getSubcategory(), lang));
-                    taskDto.setType(translationService.getMessage(taskDto.getType(), lang));
-                    try {
-                        taskDto.setName(translationService.getMessage(taskDto.getName(), lang));
-                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), lang));
-                    } catch (NoSuchLanguageException e) {
-                        String newLang = lang.equals("ru") ? "en" : "ru";
-                        taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
-                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
-                    }
-                })
-                .collect(Collectors.toList());
+        return null;
+//        return profile.getRejectedTasks().stream()
+//                .map(task -> {
+//                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
+//                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
+//                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
+//                    taskDto.setDone(profile.getDoneTasks().contains(task));
+//                    return taskDto;
+//                })
+//                .peek(taskDto -> {
+//                    taskDto.setCategory(translationService.getMessage(taskDto.getCategory(), lang));
+//                    taskDto.setSubcategory(translationService.getMessage(taskDto.getSubcategory(), lang));
+//                    taskDto.setType(translationService.getMessage(taskDto.getType(), lang));
+//                    try {
+//                        taskDto.setName(translationService.getMessage(taskDto.getName(), lang));
+//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), lang));
+//                    } catch (NoSuchLanguageException e) {
+//                        String newLang = lang.equals("ru") ? "en" : "ru";
+//                        taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
+//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
+//                    }
+//                })
+//                .collect(Collectors.toList());
     }
 
     @Override
@@ -756,10 +789,10 @@ public class TaskServiceImpl implements TaskService {
             throw new AccessErrorException(lang);
         }
         task.setCount(task.getCount() - 1);
-        profile.getDoneTasks().add(task);
-        if (profile.getRejectedTasks().contains(task)) {
-            profile.getRejectedTasks().remove(task);
-        }
+//        profile.getDoneTasks().add(task);
+//        if (profile.getRejectedTasks().contains(task)) {
+//            profile.getRejectedTasks().remove(task);
+//        }
         if (profile.getAcceptedTasks().contains(task)) {
             profile.getAcceptedTasks().remove(task);
         }
@@ -786,28 +819,29 @@ public class TaskServiceImpl implements TaskService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getDoneTasks().stream()
-                .map(task -> {
-                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
-                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
-                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
-                    taskDto.setDone(profile.getDoneTasks().contains(task));
-                    return taskDto;
-                })
-                .peek(taskDto -> {
-                    taskDto.setCategory(translationService.getMessage(taskDto.getCategory(), lang));
-                    taskDto.setSubcategory(translationService.getMessage(taskDto.getSubcategory(), lang));
-                    taskDto.setType(translationService.getMessage(taskDto.getType(), lang));
-                    try {
-                        taskDto.setName(translationService.getMessage(taskDto.getName(), lang));
-                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), lang));
-                    } catch (NoSuchLanguageException e) {
-                        String newLang = lang.equals("ru") ? "en" : "ru";
-                        taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
-                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
-                    }
-                })
-                .collect(Collectors.toList());
+        return null;
+//        return profile.getDoneTasks().stream()
+//                .map(task -> {
+//                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
+//                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
+////                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
+//                    taskDto.setDone(profile.getDoneTasks().contains(task));
+//                    return taskDto;
+//                })
+//                .peek(taskDto -> {
+//                    taskDto.setCategory(translationService.getMessage(taskDto.getCategory(), lang));
+//                    taskDto.setSubcategory(translationService.getMessage(taskDto.getSubcategory(), lang));
+//                    taskDto.setType(translationService.getMessage(taskDto.getType(), lang));
+//                    try {
+//                        taskDto.setName(translationService.getMessage(taskDto.getName(), lang));
+//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), lang));
+//                    } catch (NoSuchLanguageException e) {
+//                        String newLang = lang.equals("ru") ? "en" : "ru";
+//                        taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
+//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
+//                    }
+//                })
+//                .collect(Collectors.toList());
     }
 
     @Override

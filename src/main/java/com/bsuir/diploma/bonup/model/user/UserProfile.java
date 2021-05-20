@@ -5,6 +5,7 @@ import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Coupon;
 import com.bsuir.diploma.bonup.model.task.Stock;
 import com.bsuir.diploma.bonup.model.task.Task;
+import com.bsuir.diploma.bonup.model.task.TaskNew;
 import com.bsuir.diploma.bonup.model.task.additional.Category;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,19 +54,13 @@ public class UserProfile extends AbstractEntity {
     @JoinTable(name = "accepted_user_profile_task",
             joinColumns = @JoinColumn(name = "user_profile_id"),
             inverseJoinColumns = @JoinColumn(name = "task_id"))
-    private Set<Task> acceptedTasks = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(name = "rejected_user_profile_task",
-            joinColumns = @JoinColumn(name = "user_profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "task_id"))
-    private Set<Task> rejectedTasks = new HashSet<>();
+    private Set<TaskNew> acceptedTasks = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "done_user_profile_task",
             joinColumns = @JoinColumn(name = "user_profile_id"),
             inverseJoinColumns = @JoinColumn(name = "task_id"))
-    private Set<Task> doneTasks = new HashSet<>();
+    private Set<TaskNew> doneTasks = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "beloved_user_profile_coupon",

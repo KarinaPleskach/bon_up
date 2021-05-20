@@ -2,6 +2,7 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
@@ -37,6 +38,8 @@ public interface TaskService {
     List<PublicTaskDto> getUnactiveTasks(TokenNameOrganization tokenNameOrganization, String lang);
 
     List<PublicTaskDto> getTasks(PageStockByCategoryDto pageStockByCategoryDto, String lang);
+
+    List<NewPublicTaskDto> tasksCatalog(TokenDto tokenDto, String lang);
 
     void acceptTask(IdToken idToken, String lang);
 

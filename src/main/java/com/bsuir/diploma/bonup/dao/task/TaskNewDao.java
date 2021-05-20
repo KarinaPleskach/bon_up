@@ -9,6 +9,7 @@ import com.bsuir.diploma.bonup.model.task.additional.Type;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,5 @@ import org.springframework.stereotype.Repository;
 public interface TaskNewDao extends JpaRepository<TaskNew, Long> {
     Optional<TaskNew> findByOrganizationNewAndId(OrganizationNew organizationNew, Long id);
     List<TaskNew> findAllByOrganizationNew(OrganizationNew organizationNew);
+    List<TaskNew> findAllByCategoryInAndDateToGreaterThanEqual(List<Category> categories, Calendar date);
 }
