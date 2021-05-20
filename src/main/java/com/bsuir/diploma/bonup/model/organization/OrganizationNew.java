@@ -96,7 +96,7 @@ public class OrganizationNew extends AbstractEntity {
     private Photo photo;
 
     @Builder
-    public OrganizationNew(@NonNull String title, String descriptionText, String directorFirstName, String directorSecondName, String directorLastName, String locationCountry, String locationCity, String locationStreet, String locationHomeNumber, String contactsPhone, String contactsVK, String contactsWebSite, Integer availableTasksCount, Integer availableCouponsCount, Integer availableStocksCount, @NonNull UserLogin userLogin, Category category, Photo photo) {
+    public OrganizationNew(@NonNull String title, Float longitude, Float latitude, String descriptionText, String directorFirstName, String directorSecondName, String directorLastName, String locationCountry, String locationCity, String locationStreet, String locationHomeNumber, String contactsPhone, String contactsVK, String contactsWebSite, Integer availableTasksCount, Integer availableCouponsCount, Integer availableStocksCount, @NonNull UserLogin userLogin, Category category, Photo photo) {
         this.title = title;
         this.descriptionText = descriptionText;
         this.directorFirstName = directorFirstName;
@@ -114,6 +114,8 @@ public class OrganizationNew extends AbstractEntity {
         this.availableStocksCount = availableStocksCount;
         this.userLogin = userLogin;
         this.category = category;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.photo = photo;
     }
 }

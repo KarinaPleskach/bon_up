@@ -47,6 +47,14 @@ public class NewOrganizationController {
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 
+    @PostMapping("/{lang}/modifyOrganization")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> modifyOrganization(@PathVariable("lang") String lang, @RequestBody OrganizationNewDto newOrganization) {
+        organizationNewService.modify(newOrganization, lang);
+        String message = translationService.getMessage("message.success", lang);
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
     @PostMapping("/{lang}/userOrganizations")
     @ResponseBody
     public List<NewOrganizationWithPhoto> getListOfOrganizations(@PathVariable("lang") String lang, @RequestBody TokenDto tokenDto) {
