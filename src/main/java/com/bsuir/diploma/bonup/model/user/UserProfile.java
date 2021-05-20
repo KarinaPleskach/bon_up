@@ -5,6 +5,7 @@ import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Coupon;
 import com.bsuir.diploma.bonup.model.task.Stock;
 import com.bsuir.diploma.bonup.model.task.Task;
+import com.bsuir.diploma.bonup.model.task.additional.Category;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -89,6 +90,12 @@ public class UserProfile extends AbstractEntity {
             joinColumns = @JoinColumn(name = "user_profile_id"),
             inverseJoinColumns = @JoinColumn(name = "photo_id"))
     private List<Photo> photos = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_profile_category",
+            joinColumns = @JoinColumn(name = "user_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<Category> categories = new ArrayList<>();
 
     public UserProfile(@NonNull String name, UserLogin userLogin) {
         this.name = name;

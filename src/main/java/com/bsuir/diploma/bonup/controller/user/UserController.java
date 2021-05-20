@@ -1,10 +1,12 @@
 package com.bsuir.diploma.bonup.controller.user;
 
 import com.bsuir.diploma.bonup.dto.converter.user.UserInfoDto;
+import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
 import com.bsuir.diploma.bonup.dto.response.user.ResponseWithUser;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
+import com.bsuir.diploma.bonup.service.user.ProfileService;
 import com.bsuir.diploma.bonup.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,17 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
+    ProfileService profileService;
+    @Autowired
     private TranslationService translationService;
+
+    @PostMapping("/{lang}/setCategories")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> setCategories(@PathVariable("lang") String lang, @RequestBody TokenIdsDro tokenIdsDro) {
+        profileService.setCategories(tokenIdsDro, lang);
+        String message = translationService.getMessage("message.success", lang);
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
 
     @PostMapping("/{lang}/userRole")
     @ResponseBody
