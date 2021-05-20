@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenIdsDro {
-    private List<Long> id;
+    private List<Long> ids;
     private String token;
 }

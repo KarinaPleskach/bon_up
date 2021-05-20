@@ -39,7 +39,7 @@ public class ProfileServiceImpl implements ProfileService {
         UserProfile userProfile = findByUserLogin(userLogin, lang);
         List<Category> categories = new ArrayList<>();
 
-        for (Long id : tokenIdsDro.getId()) {
+        for (Long id : tokenIdsDro.getIds()) {
             categories.add(categoryService.getById(id, lang));
         }
 
