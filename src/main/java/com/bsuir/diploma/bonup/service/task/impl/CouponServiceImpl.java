@@ -744,7 +744,8 @@ public class CouponServiceImpl implements CouponService {
         validateIdToken(idToken, lang);
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        Coupon task = findById(idToken.getId(), lang);
+        CouponNew task = couponNewDao.findById(idToken.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
         if (profile.getDoneCoupons().contains(task)) {
             throw new CouponAlreadyActivatedException(lang);
         }
@@ -765,20 +766,20 @@ public class CouponServiceImpl implements CouponService {
         UserLogin user = userService.findByToken(employeeResolveUserDto.getUserToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         UserLogin employeeUser = userService.findByToken(employeeResolveUserDto.getEmployeeToken(), lang);
-        if (!userService.getUserRole(employeeUser).equals(UserRole.ROLE_EMPLOYEE))
-            throw new AccessErrorException(lang);
-        if (user.equals(employeeUser)) {
-            throw new AccessErrorException(lang);
-        }
-        Coupon task = findById(employeeResolveUserDto.getId(), lang);
-        List<Employee> employees = employeeService.findByOrganization(task.getOrganization());
-        if (!employees.contains(employeeService.findByUserLogin(employeeUser, lang))) {
+//        if (!userService.getUserRole(employeeUser).equals(UserRole.ROLE_EMPLOYEE))
+//            throw new AccessErrorException(lang);
+        CouponNew task = couponNewDao.findById(employeeResolveUserDto.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
+        if (user.equals(employeeUser)
+                || !task.getOrganizationNew().getUserLogin().getId().equals(employeeUser.getId())) {
             throw new AccessErrorException(lang);
         }
-//        profile.getDoneCoupons().add(task);
-        if (profile.getBoughtCoupons().contains(task)) {
-            profile.getBoughtCoupons().remove(task);
-        }
+//        List<Employee> employees = employeeService.findByOrganization(task.getOrganization());
+//        if (!employees.contains(employeeService.findByUserLogin(employeeUser, lang))) {
+//            throw new AccessErrorException(lang);
+//        }
+        profile.getDoneCoupons().add(task);
+        profile.getBoughtCoupons().remove(task);
     }
 
     private void validateEmployeeResolveUserDto(EmployeeResolveUserDto employeeResolveUserDto, String lang) {
