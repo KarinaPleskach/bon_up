@@ -6,13 +6,16 @@ import com.bsuir.diploma.bonup.dao.organization.OrganizationRepository;
 import com.bsuir.diploma.bonup.dao.user.UserLoginRepository;
 import com.bsuir.diploma.bonup.dto.converter.user.Goal;
 import com.bsuir.diploma.bonup.dto.converter.user.UserInfoDto;
+import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
+import com.bsuir.diploma.bonup.exception.photo.PhotoAlreadyExistException;
 import com.bsuir.diploma.bonup.exception.user.auth.AccessErrorException;
 import com.bsuir.diploma.bonup.exception.user.auth.NoSuchUserException;
 import com.bsuir.diploma.bonup.exception.user.auth.RoleNotFoundException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
 import com.bsuir.diploma.bonup.model.organization.Employee;
 import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
+import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Coupon;
 import com.bsuir.diploma.bonup.model.task.CouponNew;
 import com.bsuir.diploma.bonup.model.task.Task;
@@ -21,11 +24,13 @@ import com.bsuir.diploma.bonup.model.user.Role;
 import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserProfile;
 import com.bsuir.diploma.bonup.model.user.UserRole;
+import com.bsuir.diploma.bonup.service.photo.PhotoService;
 import com.bsuir.diploma.bonup.service.task.CouponService;
 import com.bsuir.diploma.bonup.service.task.TaskService;
 import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import com.bsuir.diploma.bonup.service.user.ProfileService;
 import com.bsuir.diploma.bonup.service.user.UserService;
+import java.util.Collections;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +57,8 @@ public class UserServiceImpl implements UserService {
     private CouponService couponService;
     @Autowired
     private TranslationService translationService;
+    @Autowired
+    private PhotoService photoService;
 
     @Override
     public UserLogin findByToken(String token, String lang) {
@@ -203,4 +210,12 @@ public class UserServiceImpl implements UserService {
             throw new AccessErrorException(lang);
     }
 
+    @Override
+    public void saveUserPhoto(IdToken idToken, String lang) {
+        UserLogin user = findByToken(idToken.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        Photo photo = photoService.getPhoto(idToken.getId(), lang);
+        profile.setPhotos(Collections.singletonList(photo));
+    }
 }

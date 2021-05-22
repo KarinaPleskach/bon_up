@@ -1,6 +1,7 @@
 package com.bsuir.diploma.bonup.service.user;
 
 import com.bsuir.diploma.bonup.dto.converter.user.UserInfoDto;
+import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserRole;
@@ -19,4 +20,6 @@ public interface UserService {
     int spentBalls(UserLogin user, String lang);
 
     void checkPermission(UserLogin user, String lang);
+
+    void saveUserPhoto(IdToken idToken, String lang);
 }

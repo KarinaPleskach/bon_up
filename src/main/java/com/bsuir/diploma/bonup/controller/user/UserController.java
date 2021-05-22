@@ -1,7 +1,9 @@
 package com.bsuir.diploma.bonup.controller.user;
 
 import com.bsuir.diploma.bonup.dto.converter.user.UserInfoDto;
+import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
+import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
 import com.bsuir.diploma.bonup.dto.response.user.ResponseWithUser;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -48,6 +51,14 @@ public class UserController {
         UserInfoDto userInfoDto = userService.userInfo(tokenUser, lang);
         String message = translationService.getMessage("message.success", lang);
         return new ResponseEntity<>(new ResponseWithUser(true, message, userInfoDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/{lang}/setUserPhoto")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> saveTaskPhoto(@PathVariable("lang") String lang, @RequestBody IdToken idPhotoDto) {
+        userService.saveUserPhoto(idPhotoDto, lang);
+        String message = translationService.getMessage("message.setted", lang);
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 
 }
