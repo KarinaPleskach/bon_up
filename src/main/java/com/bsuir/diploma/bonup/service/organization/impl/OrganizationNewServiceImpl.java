@@ -111,6 +111,12 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
     }
 
     @Override
+    public OrganizationNew findByName(String name, String lang) {
+        return organizationNewDao.findByTitle(name)
+                .orElseThrow(() -> new NoSuchOrganizationException(lang));
+    }
+
+    @Override
     public OrganizationNew findByIdAndUser(Long id, UserLogin userLogin, String lang) {
         return organizationNewDao.findByIdAndUserLogin(id, userLogin)
                 .orElseThrow(() -> new NoSuchOrganizationException(lang));

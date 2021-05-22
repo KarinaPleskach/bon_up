@@ -396,7 +396,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
         UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
-        OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
+        OrganizationNew organization = organizationNewService.findByName(tokenNameOrganization.getName(), lang);
 
         return taskNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {

@@ -14,6 +14,8 @@ public interface OrganizationNewService {
 
     OrganizationNew findByNameAndUser(String name, UserLogin userLogin, String lang);
 
+    OrganizationNew findByName(String name, String lang);
+
     OrganizationNew findByIdAndUser(Long id, UserLogin userLogin, String lang);
 
     void modify(OrganizationNewDto organizationNewDto, String lang);

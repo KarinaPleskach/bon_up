@@ -150,7 +150,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
         UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
-        OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
+        OrganizationNew organization = organizationNewService.findByName(tokenNameOrganization.getName(), lang);
 
         return stockNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {
