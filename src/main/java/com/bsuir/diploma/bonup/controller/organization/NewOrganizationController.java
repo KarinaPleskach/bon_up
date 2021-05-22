@@ -4,6 +4,7 @@ import com.bsuir.diploma.bonup.dto.model.organization.NewOrganizationWithPhoto;
 import com.bsuir.diploma.bonup.dto.model.organization.OrganizationWithPhotoDto;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.organization.OrganizationNewDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
@@ -65,15 +66,15 @@ public class NewOrganizationController {
 
     @PostMapping("/{lang}/organizationTasks")
     @ResponseBody
-    public List<PublicTaskNewDto> organizationTasks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
-        List<PublicTaskNewDto> list = taskService.getAllForOrg(tokenDto, lang);
+    public List<TaskWithTriggerDto> organizationTasks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
+        List<TaskWithTriggerDto> list = taskService.getAllForOrg(tokenDto, lang);
         return list;
     }
 
     @PostMapping("/{lang}/organizationCoupons")
     @ResponseBody
-    public List<PublicTaskNewDto> organizationCoupons(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
-        List<PublicTaskNewDto> list = couponService.getAllForOrg(tokenDto, lang);
+    public List<TaskWithTriggerDto> organizationCoupons(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
+        List<TaskWithTriggerDto> list = couponService.getAllForOrg(tokenDto, lang);
         return list;
     }
 
@@ -87,8 +88,8 @@ public class NewOrganizationController {
     @PostMapping("/{lang}/organizationTasksAndCoupons")
     @ResponseBody
     public ResponseEntity<ResponseWithTasksAndCoupons> organizationTasksAndCoupons(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
-        List<PublicTaskNewDto> tasks = taskService.getAllForOrg(tokenDto, lang);
-        List<PublicTaskNewDto> list = couponService.getAllForOrg(tokenDto, lang);
+        List<TaskWithTriggerDto> tasks = taskService.getAllForOrg(tokenDto, lang);
+        List<TaskWithTriggerDto> list = couponService.getAllForOrg(tokenDto, lang);
         return new ResponseEntity<>(new ResponseWithTasksAndCoupons(tasks, list), HttpStatus.OK);
     }
 }

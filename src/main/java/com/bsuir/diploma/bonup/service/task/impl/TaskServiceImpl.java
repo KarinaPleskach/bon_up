@@ -17,6 +17,7 @@ import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
@@ -221,6 +222,7 @@ public class TaskServiceImpl implements TaskService {
                 .description(taskDto.getDescriptionText())
                 .dateFrom(c1)
                 .dateTo(c2)
+                .triggeredCount(0)
                 .build();
 
         taskNewDao.save(taskNew);
@@ -392,13 +394,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
+    public List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
         UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
 
         return taskNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {
-                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                    TaskWithTriggerDto t = TaskWithTriggerDto.builder()
                             .allowedCount(o.getCount())
                             .bonusesCount(o.getBonus())
                             .descriptionText(o.getDescription())
@@ -409,6 +411,7 @@ public class TaskServiceImpl implements TaskService {
                             .organizationName(organization.getTitle())
                             .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
                             .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .triggeredCount(o.getTriggeredCount())
                             .build();
                     return t;
                 })
@@ -960,6 +963,7 @@ public class TaskServiceImpl implements TaskService {
             profile.getAcceptedTasks().remove(task);
         }
         profile.setPoints(profile.getPoints() + task.getBonus());
+        task.setTriggeredCount(task.getTriggeredCount() + 1);
     }
 
     private void validateEmployeeResolveUserDto(EmployeeResolveUserDto employeeResolveUserDto, String lang) {

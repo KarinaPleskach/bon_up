@@ -16,6 +16,7 @@ import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
@@ -167,6 +168,7 @@ public class CouponServiceImpl implements CouponService {
                 .description(taskDto.getDescriptionText())
                 .dateFrom(c1)
                 .dateTo(c2)
+                .triggeredCount(0)
                 .build();
 
         couponNewDao.save(taskNew);
@@ -175,13 +177,13 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
+    public List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
         UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
 
         return couponNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {
-                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                    TaskWithTriggerDto t = TaskWithTriggerDto.builder()
                             .allowedCount(o.getCount())
                             .bonusesCount(o.getBonus())
                             .descriptionText(o.getDescription())
@@ -192,6 +194,7 @@ public class CouponServiceImpl implements CouponService {
                             .organizationName(organization.getTitle())
                             .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
                             .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .triggeredCount(o.getTriggeredCount())
                             .build();
                     return t;
                 })
@@ -798,6 +801,7 @@ public class CouponServiceImpl implements CouponService {
 //        }
         profile.getDoneCoupons().add(task);
         profile.getBoughtCoupons().remove(task);
+        task.setTriggeredCount(task.getTriggeredCount() + 1);
     }
 
     private void validateEmployeeResolveUserDto(EmployeeResolveUserDto employeeResolveUserDto, String lang) {

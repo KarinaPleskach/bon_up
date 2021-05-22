@@ -8,6 +8,7 @@ import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -32,7 +33,7 @@ public interface TaskService {
 
     PublicTaskDto getTask(IdToken id, String lang);
 
-    List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
+    List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
 
     List<PublicTaskDto> getActiveTasks(TokenNameOrganization tokenNameOrganization, String lang);
 

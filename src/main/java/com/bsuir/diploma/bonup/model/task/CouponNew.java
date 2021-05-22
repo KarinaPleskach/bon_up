@@ -54,6 +54,9 @@ public class CouponNew extends AbstractEntity {
     @Column
     private Integer bonus;
 
+    @Column(name = "triggered_count")
+    private Integer triggeredCount;
+
     @ManyToOne
     @JoinColumn(name = "organization_new_id")
     private OrganizationNew organizationNew;

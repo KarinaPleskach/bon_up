@@ -6,6 +6,7 @@ import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
@@ -19,7 +20,7 @@ import java.util.List;
 public interface CouponService {
     long createTaskNew(TaskNewDto taskDto, String lang);
 
-    List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
+    List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang);
 
     long create(CouponDto taskDto, String lang);
 
