@@ -915,7 +915,8 @@ public class TaskServiceImpl implements TaskService {
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
 
-        Task task = findById(idToken.getId(), lang);
+        TaskNew task = taskNewDao.findById(idToken.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
         if (profile.getDoneTasks().contains(task)) {
             throw new TaskAlreadyDoneException(lang);
         }
@@ -937,25 +938,27 @@ public class TaskServiceImpl implements TaskService {
         UserLogin user = userService.findByToken(employeeResolveUserDto.getUserToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         UserLogin employeeUser = userService.findByToken(employeeResolveUserDto.getEmployeeToken(), lang);
-        if (!userService.getUserRole(employeeUser).equals(UserRole.ROLE_EMPLOYEE))
-            throw new AccessErrorException(lang);
+//        if (!userService.getUserRole(employeeUser).equals(UserRole.ROLE_EMPLOYEE))
+//            throw new AccessErrorException(lang);
         if (user.equals(employeeUser)) {
             throw new AccessErrorException(lang);
         }
-        Task task = findById(employeeResolveUserDto.getId(), lang);
-        List<Employee> employees = employeeService.findByOrganization(task.getOrganization());
-        if (!employees.contains(employeeService.findByUserLogin(employeeUser, lang))) {
+        TaskNew task = taskNewDao.findById(employeeResolveUserDto.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
+        OrganizationNew organizationNew = task.getOrganizationNew();
+//        List<Employee> employees = employeeService.findByOrganization(task.getOrganization());
+//        if (!employees.contains(employeeService.findByUserLogin(employeeUser, lang))) {
+//            throw new AccessErrorException(lang);
+//        }
+        if (!organizationNew.getUserLogin().getId().equals(employeeUser.getId())) {
             throw new AccessErrorException(lang);
         }
         task.setCount(task.getCount() - 1);
-//        profile.getDoneTasks().add(task);
-//        if (profile.getRejectedTasks().contains(task)) {
-//            profile.getRejectedTasks().remove(task);
-//        }
+        profile.getDoneTasks().add(task);
         if (profile.getAcceptedTasks().contains(task)) {
             profile.getAcceptedTasks().remove(task);
         }
-        profile.setPoints(profile.getPoints() + task.getType().getPointsCount());
+        profile.setPoints(profile.getPoints() + task.getBonus());
     }
 
     private void validateEmployeeResolveUserDto(EmployeeResolveUserDto employeeResolveUserDto, String lang) {
