@@ -61,4 +61,11 @@ public class UserController {
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
 
+    @PostMapping("/{lang}/photoId")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> photoId(@PathVariable("lang") String lang, @RequestBody TokenDto tokenUser) {
+        String message = userService.getPhotoId(tokenUser, lang).toString();
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
 }

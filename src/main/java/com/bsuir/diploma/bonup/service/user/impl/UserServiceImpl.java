@@ -218,4 +218,15 @@ public class UserServiceImpl implements UserService {
         Photo photo = photoService.getPhoto(idToken.getId(), lang);
         profile.setPhotos(Collections.singletonList(photo));
     }
+
+    @Override
+    public Long getPhotoId(TokenDto tokenUser, String lang) {
+        UserLogin user = findByToken(tokenUser.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+        if (profile.getPhotos().size() != 0) {
+            return profile.getPhotos().get(0).getId();
+        } else {
+            return null;
+        }
+    }
 }

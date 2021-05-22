@@ -22,4 +22,6 @@ public interface UserService {
     void checkPermission(UserLogin user, String lang);
 
     void saveUserPhoto(IdToken idToken, String lang);
+
+    Long getPhotoId(TokenDto tokenUser, String lang);
 }
