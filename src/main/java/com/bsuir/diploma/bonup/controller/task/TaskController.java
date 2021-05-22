@@ -3,7 +3,9 @@ package com.bsuir.diploma.bonup.controller.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -11,6 +13,7 @@ import com.bsuir.diploma.bonup.dto.model.task.task.PublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.task.TaskDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
+import com.bsuir.diploma.bonup.dto.response.task.ResponseWithFinishedAndSaved;
 import com.bsuir.diploma.bonup.dto.response.task.ResponseWithTask;
 import com.bsuir.diploma.bonup.dto.response.task.ResponseWithTasks;
 import com.bsuir.diploma.bonup.model.task.additional.Type;
@@ -183,5 +186,15 @@ public class TaskController {
         List<NewPublicTaskDto> tasks = taskService.tasksCatalog(tokenDto, lang);
         return tasks;
     }
+
+    @PostMapping("/{lang}/userSavedDoneTasks")
+    @ResponseBody
+    public ResponseEntity<ResponseWithFinishedAndSaved> userSavedDoneTasks(@PathVariable("lang") String lang, @RequestBody TokenDto tokenDto) {
+        List<SavedTaskNewDto> SavedTaskNewDto = taskService.SavedTaskNewDto(tokenDto, lang);
+        List<FinishedTaskNewDto> finished = taskService.FinishedTaskNewDto(tokenDto, lang);
+        String message = translationService.getMessage("message.success", lang);
+        return new ResponseEntity<>(new ResponseWithFinishedAndSaved(true, message, SavedTaskNewDto, finished), HttpStatus.OK);
+    }
+
 
 }

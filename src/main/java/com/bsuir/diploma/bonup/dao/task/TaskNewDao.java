@@ -18,4 +18,5 @@ public interface TaskNewDao extends JpaRepository<TaskNew, Long> {
     Optional<TaskNew> findByOrganizationNewAndId(OrganizationNew organizationNew, Long id);
     List<TaskNew> findAllByOrganizationNew(OrganizationNew organizationNew);
     List<TaskNew> findAllByCategoryInAndDateToGreaterThanEqual(List<Category> categories, Calendar date);
+    List<TaskNew> findAllByOrganizationNewAndDateToGreaterThanEqual(OrganizationNew organizationNew, Calendar date);
 }

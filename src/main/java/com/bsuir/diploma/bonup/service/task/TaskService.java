@@ -3,8 +3,10 @@ package com.bsuir.diploma.bonup.service.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
@@ -51,6 +53,10 @@ public interface TaskService {
     int numberOfAcceptedTasks(TokenDto tokenUser, String lang);
 
     int numberOfRejectedTasks(TokenDto tokenUser, String lang);
+
+    List<SavedTaskNewDto> SavedTaskNewDto(TokenDto tokenDto, String lang);
+
+    List<FinishedTaskNewDto> FinishedTaskNewDto(TokenDto tokenDto, String lang);
 
     List<PublicTaskDto> acceptedTasks(TokenDto tokenUser, String lang);
 

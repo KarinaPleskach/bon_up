@@ -10,9 +10,12 @@ import com.bsuir.diploma.bonup.dto.converter.task.TaskDtoToTaskConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskToPublicTaskDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
+import com.bsuir.diploma.bonup.dto.model.organization.NewOrganizationWithPhoto;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
@@ -200,10 +203,12 @@ public class TaskServiceImpl implements TaskService {
         Category category = categoryService.getById(taskDto.getCategoryId(), lang);
         Photo photo = photoService.getPhoto(taskDto.getPhotoId(), lang);
 
-
-        int currentTaskCount = taskNewDao.findAllByOrganizationNew(organization).size();
-        if (currentTaskCount >= organization.getAvailableTasksCount()) {
-            throw new NumberOfTasksLimitException(lang);
+        Calendar instance = today();
+        if (c2.after(instance)) {
+            int currentTaskCount = taskNewDao.findAllByOrganizationNewAndDateToGreaterThanEqual(organization, instance).size();
+            if (currentTaskCount >= organization.getAvailableTasksCount()) {
+                throw new NumberOfTasksLimitException(lang);
+            }
         }
 
         TaskNew taskNew = TaskNew.builder()
@@ -714,6 +719,134 @@ public class TaskServiceImpl implements TaskService {
         if (Objects.isNull(tokenUser) || Objects.isNull(tokenUser.getToken())) {
             throw new NullValidationException(lang);
         }
+    }
+
+    @Override
+    public List<SavedTaskNewDto> SavedTaskNewDto(TokenDto tokenDto, String lang) {
+        validateTokenUser(tokenDto, lang);
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        return profile.getAcceptedTasks().stream()
+                .filter(taskNew -> !taskNew.getDateTo().before(today()))
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return SavedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FinishedTaskNewDto> FinishedTaskNewDto(TokenDto tokenDto, String lang) {
+        validateTokenUser(tokenDto, lang);
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        List<FinishedTaskNewDto> died = profile.getAcceptedTasks().stream()
+                .filter(taskNew -> taskNew.getDateTo().before(today()))
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return FinishedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .isDied(true)
+                            .isResolved(false)
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        List<FinishedTaskNewDto> resolved = profile.getDoneTasks().stream()
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return FinishedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .isDied(false)
+                            .isResolved(true)
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+       died.addAll(resolved);
+       return died;
     }
 
     @Override
