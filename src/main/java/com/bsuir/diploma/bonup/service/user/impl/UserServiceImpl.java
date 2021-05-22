@@ -172,13 +172,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int spentBalls(UserLogin user, String lang) {
-        checkPermission(user, lang);
-        UserProfile profile = profileService.findByUserLogin(user, lang);
-        int sum = 0;
-        for (Coupon coupon : profile.getBoughtCoupons()) {
-            sum += coupon.getType().getCostCount();
-        }
-        return sum;
+//        checkPermission(user, lang);
+//        UserProfile profile = profileService.findByUserLogin(user, lang);
+//        int sum = 0;
+//        for (Coupon coupon : profile.getBoughtCoupons()) {
+//            sum += coupon.getType().getCostCount();
+//        }
+//        return sum;
+        return 0;
     }
 
     @Override

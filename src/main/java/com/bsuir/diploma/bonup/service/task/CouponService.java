@@ -2,7 +2,9 @@ package com.bsuir.diploma.bonup.service.task;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
@@ -58,4 +60,10 @@ public interface CouponService {
     int getNumberOfActivateCoupons(TokenDto tokenUser, String lang);
 
     List<PublicCouponDto> getActivateCoupons(TokenDto tokenUser, String lang);
+
+    List<SavedTaskNewDto> couponsCatalog(TokenDto tokenDto, String lang);
+
+    List<SavedTaskNewDto> savedCoupons(TokenDto tokenDto, String lang);
+
+    List<FinishedTaskNewDto> FinishedCoupons(TokenDto tokenDto, String lang);
 }

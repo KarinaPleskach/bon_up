@@ -3,15 +3,20 @@ package com.bsuir.diploma.bonup.controller.task;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.photo.IdPhotoDto;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
 import com.bsuir.diploma.bonup.dto.model.task.task.TaskDto;
+import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.dto.response.ResponseWithMessage;
+import com.bsuir.diploma.bonup.dto.response.task.ResponseWithAllCoupons;
 import com.bsuir.diploma.bonup.dto.response.task.ResponseWithCoupon;
 import com.bsuir.diploma.bonup.dto.response.task.ResponseWithCoupons;
+import com.bsuir.diploma.bonup.dto.response.task.ResponseWithFinishedAndSaved;
 import com.bsuir.diploma.bonup.model.task.additional.Type;
 import com.bsuir.diploma.bonup.service.photo.task.CouponPhotoService;
 import com.bsuir.diploma.bonup.service.task.CouponService;
@@ -177,6 +182,16 @@ public class CouponController {
         List<PublicCouponDto> tasks = couponService.getCoupons(pageStockByCategoryDto, lang);
         String message = translationService.getMessage("message.success", lang);
         return new ResponseEntity<>(new ResponseWithCoupons(true, message, tasks), HttpStatus.OK);
+    }
+
+    @PostMapping("/{lang}/userCoupons")
+    @ResponseBody
+    public ResponseEntity<ResponseWithAllCoupons> userCoupons(@PathVariable("lang") String lang, @RequestBody TokenDto tokenDto) {
+        List<SavedTaskNewDto> catalog = couponService.couponsCatalog(tokenDto, lang);
+        List<SavedTaskNewDto> bought = couponService.savedCoupons(tokenDto, lang);
+        List<FinishedTaskNewDto> finished = couponService.FinishedCoupons(tokenDto, lang);
+        String message = translationService.getMessage("message.success", lang);
+        return new ResponseEntity<>(new ResponseWithAllCoupons(true, message, catalog, bought, finished), HttpStatus.OK);
     }
 
 }

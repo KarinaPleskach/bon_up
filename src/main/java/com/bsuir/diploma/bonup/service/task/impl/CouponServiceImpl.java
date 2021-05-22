@@ -9,8 +9,12 @@ import com.bsuir.diploma.bonup.dao.translation.LanguageTranslationRepository;
 import com.bsuir.diploma.bonup.dto.converter.task.CouponDtoToCouponConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.CouponToPublicCouponDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
+import com.bsuir.diploma.bonup.dto.model.organization.NewOrganizationWithPhoto;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
+import com.bsuir.diploma.bonup.dto.model.task.FinishedTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.SavedTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.CouponDto;
 import com.bsuir.diploma.bonup.dto.model.task.coupon.PublicCouponDto;
@@ -71,6 +75,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -393,7 +398,7 @@ public class CouponServiceImpl implements CouponService {
         if (Objects.nonNull(id.getToken())) {
             UserLogin user = userService.findByToken(id.getToken(), lang);
             UserProfile profile = profileService.findByUserLogin(user, lang);
-            publicTaskDto.setBeloved(profile.getBelovedCoupons().contains(task));
+//            publicTaskDto.setBeloved(profile.getBelovedCoupons().contains(task));
             publicTaskDto.setBought(profile.getBoughtCoupons().contains(task));
             publicTaskDto.setDone(profile.getDoneCoupons().contains(task));
         }
@@ -430,7 +435,7 @@ public class CouponServiceImpl implements CouponService {
                 .map(task -> {
                     PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
-                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
+//                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
                         taskDto.setBought(finalProfile.getBoughtCoupons().contains(task));
                         taskDto.setDone(finalProfile.getDoneCoupons().contains(task));
                     }
@@ -471,7 +476,7 @@ public class CouponServiceImpl implements CouponService {
                 .map(task -> {
                     PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
-                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
+//                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
                         taskDto.setBought(finalProfile.getBoughtCoupons().contains(task));
                         taskDto.setDone(finalProfile.getDoneCoupons().contains(task));
                     }
@@ -511,7 +516,7 @@ public class CouponServiceImpl implements CouponService {
                 .map(task -> {
                     PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
-                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
+//                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
                         taskDto.setBought(finalProfile.getBoughtCoupons().contains(task));
                         taskDto.setDone(finalProfile.getDoneCoupons().contains(task));
                     }
@@ -562,12 +567,13 @@ public class CouponServiceImpl implements CouponService {
                     if (finalProfile == null) {
                         return true;
                     }
-                    return !finalProfile.getDoneCoupons().contains(task) && !finalProfile.getBelovedCoupons().contains(task) && !finalProfile.getBoughtCoupons().contains(task);
+//                    return !finalProfile.getDoneCoupons().contains(task) && !finalProfile.getBelovedCoupons().contains(task) && !finalProfile.getBoughtCoupons().contains(task);
+                    return false;
                 })
                 .map(task -> {
                     PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
                     if (Objects.nonNull(finalProfile)) {
-                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
+//                        taskDto.setBeloved(finalProfile.getBelovedCoupons().contains(task));
                         taskDto.setBought(finalProfile.getBoughtCoupons().contains(task));
                         taskDto.setDone(finalProfile.getDoneCoupons().contains(task));
                     }
@@ -605,11 +611,11 @@ public class CouponServiceImpl implements CouponService {
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         Coupon stock = findById(idToken.getId(), lang);
-        if (profile.getBelovedCoupons().contains(stock)) {
-            profile.getBelovedCoupons().remove(stock);
-        } else {
-            profile.getBelovedCoupons().add(stock);
-        }
+//        if (profile.getBelovedCoupons().contains(stock)) {
+//            profile.getBelovedCoupons().remove(stock);
+//        } else {
+//            profile.getBelovedCoupons().add(stock);
+//        }
     }
 
     private void validateIdToken(IdToken idToken, String lang) {
@@ -623,7 +629,8 @@ public class CouponServiceImpl implements CouponService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getBelovedCoupons().size();
+//        return profile.getBelovedCoupons().size();
+        return 0;
     }
 
     private void validateTokenUser(TokenDto tokenUser, String lang) {
@@ -637,28 +644,29 @@ public class CouponServiceImpl implements CouponService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getBelovedCoupons().stream()
-                .map(task -> {
-                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
-                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
-                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
-                    taskDto.setDone(profile.getDoneCoupons().contains(task));
-                    return taskDto;
-                })
-                .peek(stockDto -> {
-                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
-                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
-                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
-                    try {
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
-                    } catch (NoSuchLanguageException e) {
-                        String newLang = lang.equals("ru") ? "en" : "ru";
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
-                    }
-                })
-                .collect(Collectors.toList());
+//        return profile.getBelovedCoupons().stream()
+//                .map(task -> {
+//                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
+//                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
+//                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
+//                    taskDto.setDone(profile.getDoneCoupons().contains(task));
+//                    return taskDto;
+//                })
+//                .peek(stockDto -> {
+//                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
+//                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
+//                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
+//                    try {
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
+//                    } catch (NoSuchLanguageException e) {
+//                        String newLang = lang.equals("ru") ? "en" : "ru";
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
+//                    }
+//                })
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -669,7 +677,7 @@ public class CouponServiceImpl implements CouponService {
         UserProfile profile = profileService.findByUserLogin(user, lang);
         Coupon coupon = findById(idToken.getId(), lang);
         coupon.setCount(coupon.getCount() - 1);
-        profile.getBoughtCoupons().add(coupon);
+//        profile.getBoughtCoupons().add(coupon);
         profile.setPoints(profile.getPoints() - coupon.getType().getCostCount());
     }
 
@@ -704,28 +712,29 @@ public class CouponServiceImpl implements CouponService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getBoughtCoupons().stream()
-                .map(task -> {
-                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
-                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
-                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
-                    taskDto.setDone(profile.getDoneCoupons().contains(task));
-                    return taskDto;
-                })
-                .peek(stockDto -> {
-                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
-                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
-                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
-                    try {
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
-                    } catch (NoSuchLanguageException e) {
-                        String newLang = lang.equals("ru") ? "en" : "ru";
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
-                    }
-                })
-                .collect(Collectors.toList());
+//        return profile.getBoughtCoupons().stream()
+//                .map(task -> {
+//                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
+//                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
+//                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
+//                    taskDto.setDone(profile.getDoneCoupons().contains(task));
+//                    return taskDto;
+//                })
+//                .peek(stockDto -> {
+//                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
+//                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
+//                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
+//                    try {
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
+//                    } catch (NoSuchLanguageException e) {
+//                        String newLang = lang.equals("ru") ? "en" : "ru";
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
+//                    }
+//                })
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -764,7 +773,7 @@ public class CouponServiceImpl implements CouponService {
         if (!employees.contains(employeeService.findByUserLogin(employeeUser, lang))) {
             throw new AccessErrorException(lang);
         }
-        profile.getDoneCoupons().add(task);
+//        profile.getDoneCoupons().add(task);
         if (profile.getBoughtCoupons().contains(task)) {
             profile.getBoughtCoupons().remove(task);
         }
@@ -790,28 +799,208 @@ public class CouponServiceImpl implements CouponService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return profile.getDoneCoupons().stream()
+//        return profile.getDoneCoupons().stream()
+//                .map(task -> {
+//                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
+//                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
+//                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
+//                    taskDto.setDone(profile.getDoneCoupons().contains(task));
+//                    return taskDto;
+//                })
+//                .peek(stockDto -> {
+//                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
+//                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
+//                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
+//                    try {
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
+//                    } catch (NoSuchLanguageException e) {
+//                        String newLang = lang.equals("ru") ? "en" : "ru";
+//                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
+//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
+//                    }
+//                })
+//                .collect(Collectors.toList());
+        return null;
+    }
+
+    @Override
+    public List<SavedTaskNewDto> couponsCatalog(TokenDto tokenDto, String lang) {
+        List<Category> categories;
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        final UserProfile profile = profileService.findByUserLogin(user, lang);
+        categories = profile.getCategories();
+
+        List<CouponNew> taskNews = couponNewDao.findAllByCategoryInAndDateToGreaterThanEqual(categories, today())
+                .stream()
+                .filter(task -> !profile.getBoughtCoupons().contains(task)
+                        && !profile.getDoneCoupons().contains(task)
+                        && !task.getOrganizationNew().getUserLogin().getId().equals(user.getId()))
+                .collect(Collectors.toList());
+        Collections.shuffle(taskNews);
+
+        return taskNews.stream().limit(25)
                 .map(task -> {
-                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
-                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
-                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
-                    taskDto.setDone(profile.getDoneCoupons().contains(task));
-                    return taskDto;
-                })
-                .peek(stockDto -> {
-                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
-                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
-                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
-                    try {
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
-                    } catch (NoSuchLanguageException e) {
-                        String newLang = lang.equals("ru") ? "en" : "ru";
-                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
-                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
-                    }
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return SavedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .organization(n)
+                            .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SavedTaskNewDto> savedCoupons(TokenDto tokenDto, String lang) {
+        validateTokenUser(tokenDto, lang);
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        return profile.getBoughtCoupons().stream()
+                .filter(taskNew -> !taskNew.getDateTo().before(today()))
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return SavedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FinishedTaskNewDto> FinishedCoupons(TokenDto tokenDto, String lang) {
+        validateTokenUser(tokenDto, lang);
+        UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        List<FinishedTaskNewDto> died = profile.getBoughtCoupons().stream()
+                .filter(taskNew -> taskNew.getDateTo().before(today()))
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return FinishedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .isDied(true)
+                            .isResolved(false)
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        List<FinishedTaskNewDto> resolved = profile.getDoneCoupons().stream()
+                .map(task -> {
+                    NewOrganizationWithPhoto n = new NewOrganizationWithPhoto();
+                    n.setAvailableStocksCount(task.getOrganizationNew().getAvailableStocksCount());
+                    n.setAvailableCouponsCount(task.getOrganizationNew().getAvailableCouponsCount());
+                    n.setAvailableTasksCount(task.getOrganizationNew().getAvailableTasksCount());
+                    n.setCategoryId(task.getOrganizationNew().getCategory().getId());
+                    n.setContactsPhone(task.getOrganizationNew().getContactsPhone());
+                    n.setContactsVK(task.getOrganizationNew().getContactsVK());
+                    n.setContactsWebSite(task.getOrganizationNew().getContactsWebSite());
+                    n.setDescriptionText(task.getOrganizationNew().getDescriptionText());
+                    n.setId(task.getOrganizationNew().getId());
+                    n.setTitle(task.getOrganizationNew().getTitle());
+                    n.setLatitude(task.getOrganizationNew().getLatitude());
+                    n.setPhotoId(task.getOrganizationNew().getPhoto().getId());
+                    n.setLongitude(task.getOrganizationNew().getLongitude());
+                    n.setDirectorFirstName(task.getOrganizationNew().getDirectorFirstName());
+                    n.setDirectorLastName(task.getOrganizationNew().getDirectorLastName());
+                    n.setDirectorSecondName(task.getOrganizationNew().getDirectorSecondName());
+                    n.setAddress(task.getOrganizationNew().getLocationCountry());
+
+                    return FinishedTaskNewDto.builder()
+                            .photoId(task.getPhoto().getId())
+                            .id(task.getId())
+                            .name(task.getTitle())
+                            .description(task.getDescription())
+                            .dateFrom(format.format(task.getDateFrom().getTime()))
+                            .dateTo(format.format(task.getDateTo().getTime()))
+                            .categoryId(task.getCategory().getId())
+                            .bonusesCount(task.getBonus())
+                            .isDied(false)
+                            .isResolved(true)
+                            .organization(n)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        died.addAll(resolved);
+        return died;
     }
 
 }

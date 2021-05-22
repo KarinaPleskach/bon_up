@@ -3,6 +3,7 @@ package com.bsuir.diploma.bonup.model.user;
 import com.bsuir.diploma.bonup.model.AbstractEntity;
 import com.bsuir.diploma.bonup.model.photo.Photo;
 import com.bsuir.diploma.bonup.model.task.Coupon;
+import com.bsuir.diploma.bonup.model.task.CouponNew;
 import com.bsuir.diploma.bonup.model.task.Stock;
 import com.bsuir.diploma.bonup.model.task.Task;
 import com.bsuir.diploma.bonup.model.task.TaskNew;
@@ -62,23 +63,23 @@ public class UserProfile extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "task_id"))
     private Set<TaskNew> doneTasks = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "beloved_user_profile_coupon",
-            joinColumns = @JoinColumn(name = "user_profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "coupon_id"))
-    private Set<Coupon> belovedCoupons = new HashSet<>();
+//    @ManyToMany
+//    @JoinTable(name = "beloved_user_profile_coupon",
+//            joinColumns = @JoinColumn(name = "user_profile_id"),
+//            inverseJoinColumns = @JoinColumn(name = "coupon_id"))
+//    private Set<Coupon> belovedCoupons = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "bought_user_profile_coupon",
             joinColumns = @JoinColumn(name = "user_profile_id"),
             inverseJoinColumns = @JoinColumn(name = "coupon_id"))
-    private Set<Coupon> boughtCoupons = new HashSet<>();
+    private Set<CouponNew> boughtCoupons = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "done_user_profile_coupon",
             joinColumns = @JoinColumn(name = "user_profile_id"),
             inverseJoinColumns = @JoinColumn(name = "coupon_id"))
-    private Set<Coupon> doneCoupons = new HashSet<>();
+    private Set<CouponNew> doneCoupons = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_profile_photo",
