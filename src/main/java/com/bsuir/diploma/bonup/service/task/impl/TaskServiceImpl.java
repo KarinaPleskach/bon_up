@@ -9,6 +9,7 @@ import com.bsuir.diploma.bonup.dao.translation.LanguageTranslationRepository;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskDtoToTaskConverter;
 import com.bsuir.diploma.bonup.dto.converter.task.TaskToPublicTaskDtoConverter;
 import com.bsuir.diploma.bonup.dto.model.IdToken;
+import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.task.NewPublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
@@ -69,6 +70,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -590,14 +592,20 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<NewPublicTaskDto> tasksCatalog(TokenDto tokenDto, String lang) {
-        List<Category> categories = new ArrayList<>();
+        List<Category> categories;
         UserLogin user = userService.findByToken(tokenDto.getToken(), lang);
         final UserProfile profile = profileService.findByUserLogin(user, lang);
         categories = profile.getCategories();
 
-        return taskNewDao.findAllByCategoryInAndDateToGreaterThanEqual(categories, today()).stream()
-                .filter(task -> !profile.getAcceptedTasks().contains(task) && !profile.getDoneTasks().contains(task))
-                .limit(25)
+        List<TaskNew> taskNews = taskNewDao.findAllByCategoryInAndDateToGreaterThanEqual(categories, today())
+                .stream()
+                .filter(task -> !profile.getAcceptedTasks().contains(task)
+                        && !profile.getDoneTasks().contains(task)
+                        && !task.getOrganizationNew().getUserLogin().getId().equals(user.getId()))
+                .collect(Collectors.toList());
+        Collections.shuffle(taskNews);
+
+        return taskNews.stream().limit(25)
                 .map(task -> {
                     NewPublicTaskDto publicTaskNewDto = new NewPublicTaskDto();
                     publicTaskNewDto.setName(task.getTitle());
@@ -641,6 +649,24 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskAlreadyAcceptedException(lang);
         }
 //        profile.getAcceptedTasks().add(task);
+    }
+
+    @Override
+    public void acceptTasksNew(TokenIdsDro tokenIdsDro, String lang) {
+        UserLogin user = userService.findByToken(tokenIdsDro.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+
+        for (Long id : tokenIdsDro.getIds()) {
+            TaskNew taskNew = taskNewDao.findById(id)
+                    .orElseThrow(() -> new NoSuchTaskException(lang));
+            if (profile.getDoneTasks().contains(taskNew)) {
+                throw new TaskAlreadyDoneException(lang);
+            }
+            if (profile.getAcceptedTasks().contains(taskNew)) {
+                throw new TaskAlreadyAcceptedException(lang);
+            }
+            profile.getAcceptedTasks().add(taskNew);
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.bsuir.diploma.bonup.controller.task.saved;
 
 import com.bsuir.diploma.bonup.dto.model.IdToken;
+import com.bsuir.diploma.bonup.dto.model.TokenIdsDro;
 import com.bsuir.diploma.bonup.dto.model.task.employee.EmployeeResolveUserDto;
 import com.bsuir.diploma.bonup.dto.model.task.task.PublicTaskDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
@@ -31,6 +32,14 @@ public class SavedTasksController {
     @ResponseBody
     public ResponseEntity<ResponseWithMessage> acceptTask(@PathVariable("lang") String lang, @RequestBody IdToken idToken) {
         taskService.acceptTask(idToken, lang);
+        String message = translationService.getMessage("message.success", lang);
+        return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
+    }
+
+    @PostMapping("/{lang}/acceptTasks")
+    @ResponseBody
+    public ResponseEntity<ResponseWithMessage> acceptTasks(@PathVariable("lang") String lang, @RequestBody TokenIdsDro idToken) {
+        taskService.acceptTasksNew(idToken, lang);
         String message = translationService.getMessage("message.success", lang);
         return new ResponseEntity<>(new ResponseWithMessage(true, message), HttpStatus.OK);
     }
