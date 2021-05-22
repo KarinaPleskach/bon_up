@@ -13,6 +13,7 @@ import com.bsuir.diploma.bonup.dto.model.IdToken;
 import com.bsuir.diploma.bonup.dto.model.organization.TokenNameOrganization;
 import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
 import com.bsuir.diploma.bonup.dto.model.task.TaskNewDto;
+import com.bsuir.diploma.bonup.dto.model.task.TaskWithTriggerDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PageStockByCategoryDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.PublicStockDto;
 import com.bsuir.diploma.bonup.dto.model.task.stock.SetNameAndDescriptionDto;
@@ -147,13 +148,13 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<PublicTaskNewDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
+    public List<TaskWithTriggerDto> getAllForOrg(TokenNameOrganization tokenNameOrganization, String lang) {
         UserLogin userLogin = userService.findByToken(tokenNameOrganization.getToken(), lang);
         OrganizationNew organization = organizationNewService.findByNameAndUser(tokenNameOrganization.getName(), userLogin, lang);
 
         return stockNewDao.findAllByOrganizationNew(organization).stream()
                 .map(o -> {
-                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                    TaskWithTriggerDto t = TaskWithTriggerDto.builder()
                             .allowedCount(0)
                             .bonusesCount(0)
                             .descriptionText(o.getDescription())
@@ -164,6 +165,7 @@ public class StockServiceImpl implements StockService {
                             .organizationName(organization.getTitle())
                             .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
                             .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .triggeredCount(0)
                             .build();
                     return t;
                 })

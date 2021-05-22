@@ -80,8 +80,8 @@ public class NewOrganizationController {
 
     @PostMapping("/{lang}/organizationStocks")
     @ResponseBody
-    public List<PublicTaskNewDto> organizationStocks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
-        List<PublicTaskNewDto> list = stockService.getAllForOrg(tokenDto, lang);
+    public List<TaskWithTriggerDto> organizationStocks(@PathVariable("lang") String lang, @RequestBody TokenNameOrganization tokenDto) {
+        List<TaskWithTriggerDto> list = stockService.getAllForOrg(tokenDto, lang);
         return list;
     }
 

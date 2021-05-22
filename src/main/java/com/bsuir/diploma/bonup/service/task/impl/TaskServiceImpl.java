@@ -982,13 +982,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<PublicTaskNewDto> getDoneTasks(TokenDto tokenUser, String lang) {
+    public List<TaskWithTriggerDto> getDoneTasks(TokenDto tokenUser, String lang) {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         return profile.getDoneTasks().stream()
                 .map(o -> {
-                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                    TaskWithTriggerDto t = TaskWithTriggerDto.builder()
                             .allowedCount(o.getCount())
                             .bonusesCount(o.getBonus())
                             .descriptionText(o.getDescription())
@@ -998,6 +998,7 @@ public class TaskServiceImpl implements TaskService {
                             .organizationName(o.getOrganizationNew().getTitle())
                             .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
                             .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .triggeredCount(0)
                             .build();
                     return t;
                 })
