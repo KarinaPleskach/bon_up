@@ -220,13 +220,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long getPhotoId(TokenDto tokenUser, String lang) {
+    public String getPhotoId(TokenDto tokenUser, String lang) {
         UserLogin user = findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         if (profile.getPhotos().size() != 0) {
-            return profile.getPhotos().get(0).getId();
+            return profile.getPhotos().get(0).getId().toString();
         } else {
-            return null;
+            return "";
         }
     }
 }

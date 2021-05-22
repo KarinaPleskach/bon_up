@@ -23,5 +23,5 @@ public interface UserService {
 
     void saveUserPhoto(IdToken idToken, String lang);
 
-    Long getPhotoId(TokenDto tokenUser, String lang);
+    String getPhotoId(TokenDto tokenUser, String lang);
 }
