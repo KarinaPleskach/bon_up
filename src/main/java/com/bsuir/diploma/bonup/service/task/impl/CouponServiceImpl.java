@@ -675,16 +675,18 @@ public class CouponServiceImpl implements CouponService {
         canBuyCoupon(idToken, lang);
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        Coupon coupon = findById(idToken.getId(), lang);
+        CouponNew coupon = couponNewDao.findById(idToken.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
         coupon.setCount(coupon.getCount() - 1);
-//        profile.getBoughtCoupons().add(coupon);
-        profile.setPoints(profile.getPoints() - coupon.getType().getCostCount());
+        profile.getBoughtCoupons().add(coupon);
+        profile.setPoints(profile.getPoints() - coupon.getBonus());
     }
 
     private void canBuyCoupon(IdToken idToken, String lang) {
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        Coupon coupon = findById(idToken.getId(), lang);
+        CouponNew coupon = couponNewDao.findById(idToken.getId())
+                .orElseThrow(() -> new NoSuchTaskException(lang));
         if (profile.getBoughtCoupons().contains(coupon)) {
             throw new CouponAlreadyBoughtException(lang);
         }
@@ -694,7 +696,7 @@ public class CouponServiceImpl implements CouponService {
         if (coupon.getCount() <= 0) {
             throw new NumberOfCouponsLimitException(lang);
         }
-        if (taskService.getBalls(new TokenDto(idToken.getToken()), lang) < (int) coupon.getType().getCostCount()) {
+        if (taskService.getBalls(new TokenDto(idToken.getToken()), lang) < (int) coupon.getBonus()) {
             throw new NotEnoughBallsException(lang);
         }
     }
@@ -835,6 +837,7 @@ public class CouponServiceImpl implements CouponService {
                 .stream()
                 .filter(task -> !profile.getBoughtCoupons().contains(task)
                         && !profile.getDoneCoupons().contains(task)
+                        && task.getCount() > 0
                         && !task.getOrganizationNew().getUserLogin().getId().equals(user.getId()))
                 .collect(Collectors.toList());
         Collections.shuffle(taskNews);

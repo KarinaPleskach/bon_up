@@ -606,6 +606,7 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .filter(task -> !profile.getAcceptedTasks().contains(task)
                         && !profile.getDoneTasks().contains(task)
+                        && task.getCount() > 0
                         && !task.getOrganizationNew().getUserLogin().getId().equals(user.getId()))
                 .collect(Collectors.toList());
         Collections.shuffle(taskNews);
