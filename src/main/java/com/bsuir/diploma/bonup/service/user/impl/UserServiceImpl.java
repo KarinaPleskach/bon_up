@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
         userInfoDto.setTasksNumber((long) profile.getDoneTasks().size());
 
         userInfoDto.setFinishedTasks(taskService.getDoneTasks(tokenUser, lang));
-        userInfoDto.setFinishedCoupons(couponService.getBoughtCoupons(tokenUser, lang));
+        userInfoDto.setFinishedCoupons(couponService.getDoneCoupons(tokenUser, lang));
 
         Goal g1 = new Goal();
         g1.setName(translationService.getMessage("goal.1", lang));

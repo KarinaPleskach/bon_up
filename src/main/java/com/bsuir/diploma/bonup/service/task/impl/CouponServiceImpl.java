@@ -734,6 +734,30 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    public List<PublicTaskNewDto> getDoneCoupons(TokenDto tokenUser, String lang) {
+        validateTokenUser(tokenUser, lang);
+        UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+        return profile.getDoneCoupons().stream()
+                .map(o -> {
+                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(o.getCount())
+                            .bonusesCount(o.getBonus())
+                            .descriptionText(o.getDescription())
+                            .categoryId(o.getCategory().getId())
+//                            .id(o.getId())
+                            .photoId(o.getPhoto().getId())
+                            .title(o.getTitle())
+                            .organizationName(o.getOrganizationNew().getTitle())
+                            .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
+                            .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .build();
+                    return t;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void canActivateCoupon(IdToken idToken, String lang) {
         validateIdToken(idToken, lang);
         UserLogin user = userService.findByToken(idToken.getToken(), lang);
