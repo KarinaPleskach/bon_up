@@ -978,33 +978,26 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<PublicTaskDto> getDoneTasks(TokenDto tokenUser, String lang) {
+    public List<PublicTaskNewDto> getDoneTasks(TokenDto tokenUser, String lang) {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        return null;
-//        return profile.getDoneTasks().stream()
-//                .map(task -> {
-//                    PublicTaskDto taskDto = taskToPublicTaskDtoConverter.convert(task);
-//                    taskDto.setAccepted(profile.getAcceptedTasks().contains(task));
-////                    taskDto.setRejected(profile.getRejectedTasks().contains(task));
-//                    taskDto.setDone(profile.getDoneTasks().contains(task));
-//                    return taskDto;
-//                })
-//                .peek(taskDto -> {
-//                    taskDto.setCategory(translationService.getMessage(taskDto.getCategory(), lang));
-//                    taskDto.setSubcategory(translationService.getMessage(taskDto.getSubcategory(), lang));
-//                    taskDto.setType(translationService.getMessage(taskDto.getType(), lang));
-//                    try {
-//                        taskDto.setName(translationService.getMessage(taskDto.getName(), lang));
-//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), lang));
-//                    } catch (NoSuchLanguageException e) {
-//                        String newLang = lang.equals("ru") ? "en" : "ru";
-//                        taskDto.setName(translationService.getMessage(taskDto.getName(), newLang));
-//                        taskDto.setDescription(translationService.getMessage(taskDto.getDescription(), newLang));
-//                    }
-//                })
-//                .collect(Collectors.toList());
+        return profile.getDoneTasks().stream()
+                .map(o -> {
+                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(o.getCount())
+                            .bonusesCount(o.getBonus())
+                            .descriptionText(o.getDescription())
+                            .categoryId(o.getCategory().getId())
+                            .photoId(o.getPhoto().getId())
+                            .title(o.getTitle())
+                            .organizationName(o.getOrganizationNew().getTitle())
+                            .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
+                            .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .build();
+                    return t;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

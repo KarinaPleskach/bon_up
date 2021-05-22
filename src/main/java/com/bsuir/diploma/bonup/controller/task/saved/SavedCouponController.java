@@ -63,9 +63,9 @@ public class SavedCouponController {
     @PostMapping("/{lang}/boughtCoupons")
     @ResponseBody
     public ResponseEntity<ResponseWithCoupons> doneTasks(@PathVariable("lang") String lang, @RequestBody TokenDto tokenUser) {
-        List<PublicCouponDto> tasks = couponService.getBoughtCoupons(tokenUser, lang);
+//        List<PublicCouponDto> tasks = couponService.getBoughtCoupons(tokenUser, lang);
         String message = translationService.getMessage("message.success", lang);
-        return new ResponseEntity<>(new ResponseWithCoupons(true, message, tasks), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseWithCoupons(true, message, null), HttpStatus.OK);
     }
 
     @PostMapping("/{lang}/numberOfBoughtCoupons")

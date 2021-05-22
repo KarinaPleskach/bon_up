@@ -1,8 +1,10 @@
 package com.bsuir.diploma.bonup.service.user.impl;
 
 import com.bsuir.diploma.bonup.dao.organization.EmployeeRepository;
+import com.bsuir.diploma.bonup.dao.organization.OrganizationNewDao;
 import com.bsuir.diploma.bonup.dao.organization.OrganizationRepository;
 import com.bsuir.diploma.bonup.dao.user.UserLoginRepository;
+import com.bsuir.diploma.bonup.dto.converter.user.Goal;
 import com.bsuir.diploma.bonup.dto.converter.user.UserInfoDto;
 import com.bsuir.diploma.bonup.dto.model.user.auth.TokenDto;
 import com.bsuir.diploma.bonup.exception.user.auth.AccessErrorException;
@@ -10,13 +12,18 @@ import com.bsuir.diploma.bonup.exception.user.auth.NoSuchUserException;
 import com.bsuir.diploma.bonup.exception.user.auth.RoleNotFoundException;
 import com.bsuir.diploma.bonup.exception.validation.NullValidationException;
 import com.bsuir.diploma.bonup.model.organization.Employee;
+import com.bsuir.diploma.bonup.model.organization.OrganizationNew;
 import com.bsuir.diploma.bonup.model.task.Coupon;
+import com.bsuir.diploma.bonup.model.task.CouponNew;
 import com.bsuir.diploma.bonup.model.task.Task;
+import com.bsuir.diploma.bonup.model.task.TaskNew;
 import com.bsuir.diploma.bonup.model.user.Role;
 import com.bsuir.diploma.bonup.model.user.UserLogin;
 import com.bsuir.diploma.bonup.model.user.UserProfile;
 import com.bsuir.diploma.bonup.model.user.UserRole;
+import com.bsuir.diploma.bonup.service.task.CouponService;
 import com.bsuir.diploma.bonup.service.task.TaskService;
+import com.bsuir.diploma.bonup.service.translation.TranslationService;
 import com.bsuir.diploma.bonup.service.user.ProfileService;
 import com.bsuir.diploma.bonup.service.user.UserService;
 import java.util.Objects;
@@ -34,11 +41,17 @@ public class UserServiceImpl implements UserService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private OrganizationRepository organizationRepository;
+    @Autowired
+    private OrganizationNewDao organizationNewDao;
 
     @Autowired
     private ProfileService profileService;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private CouponService couponService;
+    @Autowired
+    private TranslationService translationService;
 
     @Override
     public UserLogin findByToken(String token, String lang) {
@@ -82,80 +95,81 @@ public class UserServiceImpl implements UserService {
         validateTokenUser(tokenUser, lang);
         UserLogin user = findByToken(tokenUser.getToken(), lang);
         UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setLogin(user.getLogin());
+        userInfoDto.setEmail(user.getLogin());
         userInfoDto.setName(profileService.findByUserLogin(user, lang).getName());
-        if (getUserRole(user).equals(UserRole.ROLE_EMPLOYEE)) {
-            Employee employee = employeeRepository.findByUserLogin(user)
-                    .orElseThrow(() -> new NoSuchUserException(lang));
-            userInfoDto.setOrganizationName(employee.getOrganization().getName());
-        } else if (getUserRole(user).equals(UserRole.ROLE_ORGANIZATION_ADMIN)) {
-            String organization = organizationRepository.findByUserLogin(user).isEmpty() ? "-" :  organizationRepository.findByUserLogin(user).get(0).getName();
-            userInfoDto.setOrganizationName(organization);
+        StringBuilder organizationName = new StringBuilder();
+        if (organizationNewDao.findByUserLogin(user).size() != 0) {
+            organizationName = new StringBuilder(organizationNewDao.findByUserLogin(user).get(0).getTitle());
         }
+        for (int i = 1; i < organizationNewDao.findByUserLogin(user).size(); i++) {
+            organizationName.append(", ");
+            organizationName.append(organizationNewDao.findByUserLogin(user).get(i).getTitle());
+        }
+        userInfoDto.setOrganizationName(organizationName.toString());
         if (userInfoDto.getOrganizationName() == null)
             userInfoDto.setOrganizationName("-");
         UserProfile profile = profileService.findByUserLogin(user, lang);
-        int done, coupons, balls, spent;
-        if (profile.getDoneTasks().size() != 0)
-            done = (int) (100 * profile.getDoneTasks().size() / profile.getAcceptedTasks().size());
-        else
-            done = 0;
-        if (profile.getDoneCoupons().size() != 0)
-            coupons = (int) (100 * profile.getDoneCoupons().size() / profile.getBoughtCoupons().size());
-        else
-            coupons = 0;
-        if (taskService.getBalls(tokenUser, lang) != 0)
-            balls = (int) (100 * taskService.getBalls(tokenUser, lang) / getAllBalls(user, lang));
-        else
-            balls = 0;
-        if (spentBalls(user, lang) != 0)
-            spent = (int) (100 * spentBalls(user, lang) / getAllBalls(user, lang));
-        else
-            spent = 0;
+        if (profile.getPhotos().size() != 0) {
+            userInfoDto.setPhotoId(profile.getPhotos().get(0).getId());
+        }
+//        int done, coupons, balls, spent;
+//        if (profile.getDoneTasks().size() != 0)
+//            done = (int) (100 * profile.getDoneTasks().size() / profile.getAcceptedTasks().size());
+//        else
+//            done = 0;
+//        if (profile.getDoneCoupons().size() != 0)
+//            coupons = (int) (100 * profile.getDoneCoupons().size() / profile.getBoughtCoupons().size());
+//        else
+//            coupons = 0;
+//        if (taskService.getBalls(tokenUser, lang) != 0)
+//            balls = (int) (100 * taskService.getBalls(tokenUser, lang) / getAllBalls(user, lang));
+//        else
+//            balls = 0;
+//        if (spentBalls(user, lang) != 0)
+//            spent = (int) (100 * spentBalls(user, lang) / getAllBalls(user, lang));
+//        else
+//            spent = 0;
 
-        userInfoDto.setDonePercent((long) done);
-        userInfoDto.setCouponsPercent((long) coupons);
-        userInfoDto.setBallsPercent((long) balls);
-        userInfoDto.setSpentBallsPercent((long) spent);
+//        userInfoDto.setDonePercent((long) done);
+//        userInfoDto.setCouponsPercent((long) coupons);
+//        userInfoDto.setBallsPercent((long) balls);
+//        userInfoDto.setSpentBallsPercent((long) spent);
 
         userInfoDto.setBalls(taskService.getBalls(tokenUser, lang));
         userInfoDto.setSpentBalls((long) spentBalls(user, lang));
         userInfoDto.setTasksNumber((long) profile.getDoneTasks().size());
 
-//        if (getAllBalls(user, lang) >= 1000) {
-//            Progress progress = progressRepository.findByNameKey("goal.1");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, true));
-//        } else {
-//            Progress progress = progressRepository.findByNameKey("goal.1");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, false));
-//        }
-//        if (spentBalls(user, lang) >= 1000) {
-//            Progress progress = progressRepository.findByNameKey("goal.2");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, true));
-//        } else {
-//            Progress progress = progressRepository.findByNameKey("goal.2");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, false));
-//        }
-//        if (profile.getDoneTasks().size() >= 100) {
-//            Progress progress = progressRepository.findByNameKey("goal.3");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, true));
-//        } else {
-//            Progress progress = progressRepository.findByNameKey("goal.3");
-//            String name = translationService.getMessage(progress.getNameKey(), lang);
-//            String desc = translationService.getMessage(progress.getDescriptionKey(), lang);
-//            userInfoDto.getGoals().add(new NameDescription(name, desc, false));
-//
-//        }
+        userInfoDto.setFinishedTasks(taskService.getDoneTasks(tokenUser, lang));
+        userInfoDto.setFinishedCoupons(couponService.getBoughtCoupons(tokenUser, lang));
+
+        Goal g1 = new Goal();
+        g1.setName(translationService.getMessage("goal.1", lang));
+        g1.setDescription(translationService.getMessage("goal.1.desc", lang));
+        g1.setFlag(false);
+
+        Goal g2 = new Goal();
+        g2.setName(translationService.getMessage("goal.2", lang));
+        g2.setDescription(translationService.getMessage("goal.2.desc", lang));
+        g2.setFlag(false);
+
+        Goal g3 = new Goal();
+        g3.setName(translationService.getMessage("goal.3", lang));
+        g3.setDescription(translationService.getMessage("goal.3.desc", lang));
+        g3.setFlag(false);
+
+        userInfoDto.getGoals().add(g1);
+        userInfoDto.getGoals().add(g2);
+        userInfoDto.getGoals().add(g3);
+
+        if (getAllBalls(user, lang) >= 1000) {
+            userInfoDto.getGoals().get(0).setFlag(true);
+        }
+        if (spentBalls(user, lang) >= 1000) {
+            userInfoDto.getGoals().get(1).setFlag(true);
+        }
+        if (profile.getDoneTasks().size() >= 100) {
+            userInfoDto.getGoals().get(2).setFlag(true);
+        }
         return userInfoDto;
     }
 
@@ -164,22 +178,23 @@ public class UserServiceImpl implements UserService {
         checkPermission(user, lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
         int sum = 0;
-//        for (Task task : profile.getDoneTasks()) {
-//            sum += task.getType().getPointsCount();
-//        }
+        for (TaskNew task : profile.getDoneTasks()) {
+            sum += task.getBonus();
+        }
         return sum;
     }
 
     @Override
     public int spentBalls(UserLogin user, String lang) {
-//        checkPermission(user, lang);
-//        UserProfile profile = profileService.findByUserLogin(user, lang);
-//        int sum = 0;
-//        for (Coupon coupon : profile.getBoughtCoupons()) {
-//            sum += coupon.getType().getCostCount();
-//        }
-//        return sum;
-        return 0;
+        UserProfile profile = profileService.findByUserLogin(user, lang);
+        int sum = 0;
+        for (CouponNew coupon : profile.getBoughtCoupons()) {
+            sum += coupon.getCount();
+        }
+        for (CouponNew coupon : profile.getDoneCoupons()) {
+            sum += coupon.getCount();
+        }
+        return sum;
     }
 
     @Override

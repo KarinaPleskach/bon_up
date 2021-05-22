@@ -710,33 +710,27 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<PublicCouponDto> getBoughtCoupons(TokenDto tokenUser, String lang) {
+    public List<PublicTaskNewDto> getBoughtCoupons(TokenDto tokenUser, String lang) {
         validateTokenUser(tokenUser, lang);
         UserLogin user = userService.findByToken(tokenUser.getToken(), lang);
         UserProfile profile = profileService.findByUserLogin(user, lang);
-//        return profile.getBoughtCoupons().stream()
-//                .map(task -> {
-//                    PublicCouponDto taskDto = couponToPublicCouponDtoConverter.convert(task);
-//                    taskDto.setBeloved(profile.getBelovedCoupons().contains(task));
-//                    taskDto.setBought(profile.getBoughtCoupons().contains(task));
-//                    taskDto.setDone(profile.getDoneCoupons().contains(task));
-//                    return taskDto;
-//                })
-//                .peek(stockDto -> {
-//                    stockDto.setCategory(translationService.getMessage(stockDto.getCategory(), lang));
-//                    stockDto.setSubcategory(translationService.getMessage(stockDto.getSubcategory(), lang));
-//                    stockDto.setType(translationService.getMessage(stockDto.getType(), lang));
-//                    try {
-//                        stockDto.setName(translationService.getMessage(stockDto.getName(), lang));
-//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), lang));
-//                    } catch (NoSuchLanguageException e) {
-//                        String newLang = lang.equals("ru") ? "en" : "ru";
-//                        stockDto.setName(translationService.getMessage(stockDto.getName(), newLang));
-//                        stockDto.setDescription(translationService.getMessage(stockDto.getDescription(), newLang));
-//                    }
-//                })
-//                .collect(Collectors.toList());
-        return null;
+        return profile.getBoughtCoupons().stream()
+                .map(o -> {
+                    PublicTaskNewDto t = PublicTaskNewDto.builder()
+                            .allowedCount(o.getCount())
+                            .bonusesCount(o.getBonus())
+                            .descriptionText(o.getDescription())
+                            .categoryId(o.getCategory().getId())
+//                            .id(o.getId())
+                            .photoId(o.getPhoto().getId())
+                            .title(o.getTitle())
+                            .organizationName(o.getOrganizationNew().getTitle())
+                            .startDateTimestamp(o.getDateFrom().getTimeInMillis() / 1000.0)
+                            .endDateTimestamp(o.getDateTo().getTimeInMillis() / 1000.0)
+                            .build();
+                    return t;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

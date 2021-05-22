@@ -68,7 +68,7 @@ public interface TaskService {
 
     long getBalls(TokenDto tokenUser, String lang);
 
-    List<PublicTaskDto> getDoneTasks(TokenDto tokenUser, String lang);
+    List<PublicTaskNewDto> getDoneTasks(TokenDto tokenUser, String lang);
 
     int getNumberOfDoneTasks(TokenDto tokenUser, String lang);
 }

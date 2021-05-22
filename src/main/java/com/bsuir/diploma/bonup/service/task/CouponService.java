@@ -51,7 +51,7 @@ public interface CouponService {
 
     int getNumberOfBoughtCoupons(TokenDto tokenUser, String lang);
 
-    List<PublicCouponDto> getBoughtCoupons(TokenDto tokenUser, String lang);
+    List<PublicTaskNewDto> getBoughtCoupons(TokenDto tokenUser, String lang);
 
     void canActivateCoupon(IdToken idToken, String lang);
 

@@ -1,20 +1,30 @@
 package com.bsuir.diploma.bonup.dto.converter.user;
 
+import com.bsuir.diploma.bonup.dto.model.task.PublicTaskNewDto;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class UserInfoDto {
     private String name;
-    private String login;
+    private String email;
     private String organizationName;
 
     private Long balls;
     private Long tasksNumber;
     private Long spentBalls;
 
-    private Long donePercent;
-    private Long couponsPercent;
+    private List<PublicTaskNewDto> finishedTasks;
+    private List<PublicTaskNewDto> finishedCoupons;
 
-    private Long ballsPercent;
-    private Long spentBallsPercent;
+    List<Goal> goals = new ArrayList<>();
+
+    private Long photoId;
+
+//    private Long donePercent;
+//    private Long couponsPercent;
+//
+//    private Long ballsPercent;
+//    private Long spentBallsPercent;
 }

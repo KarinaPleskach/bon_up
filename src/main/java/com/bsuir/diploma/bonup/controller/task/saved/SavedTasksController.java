@@ -115,7 +115,8 @@ public class SavedTasksController {
     @PostMapping("/{lang}/doneTasks")
     @ResponseBody
     public ResponseEntity<ResponseWithTasks> doneTasks(@PathVariable("lang") String lang, @RequestBody TokenDto tokenUser) {
-        List<PublicTaskDto> tasks = taskService.getDoneTasks(tokenUser, lang);
+//        List<PublicTaskDto> tasks = taskService.getDoneTasks(tokenUser, lang);
+        List<PublicTaskDto> tasks = null;
         String message = translationService.getMessage("message.success", lang);
         return new ResponseEntity<>(new ResponseWithTasks(true, message, tasks), HttpStatus.OK);
     }
