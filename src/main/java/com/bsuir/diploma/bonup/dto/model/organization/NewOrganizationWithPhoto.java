@@ -14,10 +14,7 @@ public class NewOrganizationWithPhoto {
     private String directorFirstName;
     private String directorSecondName;
     private String directorLastName;
-    private String locationCountry;
-    private String locationCity;
-    private String locationStreet;
-    private String locationHomeNumber;
+    private String address;
     private Float latitude;
     private Float longitude;
     private String contactsPhone;

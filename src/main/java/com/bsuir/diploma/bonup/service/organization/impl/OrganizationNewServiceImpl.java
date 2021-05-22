@@ -92,16 +92,16 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
                 .directorFirstName(organizationNewDto.getDirectorFirstName())
                 .directorLastName(organizationNewDto.getDirectorLastName())
                 .directorSecondName(organizationNewDto.getDirectorSecondName())
-                .locationCity(organizationNewDto.getLocationCity())
-                .locationCountry(organizationNewDto.getLocationCountry())
+                .locationCity(organizationNewDto.getAddress())
+                .locationCountry(organizationNewDto.getAddress())
                 .userLogin(user)
-                .locationHomeNumber(organizationNewDto.getLocationHomeNumber())
-                .locationStreet(organizationNewDto.getLocationStreet())
+                .locationHomeNumber(organizationNewDto.getAddress())
+                .locationStreet(organizationNewDto.getAddress())
                 .photo(photo)
                 .title(organizationNewDto.getTitle())
                 .category(category)
-                .latitude(0.0f)
-                .longitude(0.0f)
+                .latitude(organizationNewDto.getLatitude().floatValue())
+                .longitude(organizationNewDto.getLongitude().floatValue())
                 .build();
         organizationNewDao.save(organizationNew);
     }
@@ -143,16 +143,13 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
                     n.setDescriptionText(o.getDescriptionText());
                     n.setId(o.getId());
                     n.setTitle(o.getTitle());
-                    n.setLocationCity(o.getLocationCity());
                     n.setLatitude(o.getLatitude());
                     n.setPhotoId(o.getPhoto().getId());
                     n.setLongitude(o.getLongitude());
                     n.setDirectorFirstName(o.getDirectorFirstName());
                     n.setDirectorLastName(o.getDirectorLastName());
                     n.setDirectorSecondName(o.getDirectorSecondName());
-                    n.setLocationCountry(o.getLocationCountry());
-                    n.setLocationStreet(o.getLocationStreet());
-                    n.setLocationHomeNumber(o.getLocationHomeNumber());
+                    n.setAddress(o.getLocationCountry());
                     return n;
                 })
                 .collect(Collectors.toList());
@@ -195,16 +192,16 @@ public class OrganizationNewServiceImpl implements OrganizationNewService {
         organizationNew.setDirectorFirstName(organizationNewDto.getDirectorFirstName());
         organizationNew.setDirectorLastName(organizationNewDto.getDirectorLastName());
         organizationNew.setDirectorSecondName(organizationNewDto.getDirectorSecondName());
-        organizationNew.setLocationCity(organizationNewDto.getLocationCity());
-        organizationNew.setLocationCountry(organizationNewDto.getLocationCountry());
+        organizationNew.setLocationCity(organizationNewDto.getAddress());
+        organizationNew.setLocationCountry(organizationNewDto.getAddress());
         organizationNew.setUserLogin(user);
-        organizationNew.setLocationHomeNumber(organizationNewDto.getLocationHomeNumber());
-        organizationNew.setLocationStreet(organizationNewDto.getLocationStreet());
+        organizationNew.setLocationHomeNumber(organizationNewDto.getAddress());
+        organizationNew.setLocationStreet(organizationNewDto.getAddress());
         organizationNew.setPhoto(photo);
         organizationNew.setTitle(organizationNewDto.getTitle());
         organizationNew.setCategory(category);
-        organizationNew.setLatitude(0.0f);
-        organizationNew.setLongitude(0.0f);
+        organizationNew.setLatitude(organizationNewDto.getLatitude().floatValue());
+        organizationNew.setLongitude(organizationNewDto.getLongitude().floatValue());
     }
 }
 

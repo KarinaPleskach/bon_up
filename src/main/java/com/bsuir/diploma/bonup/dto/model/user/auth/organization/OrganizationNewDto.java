@@ -10,10 +10,9 @@ public class OrganizationNewDto {
     private String directorFirstName;
     private String directorSecondName;
     private String directorLastName;
-    private String locationCountry;
-    private String locationCity;
-    private String locationStreet;
-    private String locationHomeNumber;
+    private String address;
+    private Double latitude;
+    private Double longitude;
     private String contactsPhone;
     private String contactsVK;
     private String contactsWebSite;
